@@ -1,0 +1,54 @@
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    font-family: 'c4type';
+}
+
+.frontpage-container {
+    text-align: center;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-size: 64px;
+}
+
+@font-face {
+    font-family: 'aukera';
+    src: url('fonts/aukera.woff2') format('woff2'),
+         url('fonts/aukera.woff')  format('woff'),
+         url('fonts/aukera.otf')   format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'c4type';
+    src: url('fonts/C4v4-Regular.woff2') format('woff2'),
+         url('fonts/C4v4-Regular.woff')  format('woff'),
+         url('fonts/C4v.4-Regular.otf')  format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'geneseexcalibur';
+    src: url('fonts/Genese-excalibur-boldstone.woff2') format('woff2'),
+         url('fonts/Genese-excalibur-boldstone.woff')  format('woff'),
+         url('fonts/Genese-excalibur-boldstone.otf')   format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'laborisette';
+    src: url('fonts/LaBorisette-Regular.woff2') format('woff2'),
+         url('fonts/LaBorisette-Regular.woff')  format('woff'),
+         url('fonts/LaBorisette-Regular.otf')   format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
