@@ -1,5 +1,4 @@
-function createProgramFromScripts(
-    gl, shaderScriptIds, opt_attribs, opt_locations, opt_errorCallback) {
+function createProgramFromScripts(gl, shaderScriptIds, opt_attribs, opt_locations, opt_errorCallback) {
   const shaders = [];
   for (let ii = 0; ii < shaderScriptIds.length; ++ii) {
     shaders.push(createShaderFromScript(
@@ -32,23 +31,18 @@ function error(msg) {
 
 function loadShader(gl, shaderSource, shaderType, opt_errorCallback) {
     const errFn = opt_errorCallback || error;
-    // Create the shader object
     const shader = gl.createShader(shaderType);
 
-    // Load the shader source
     gl.shaderSource(shader, shaderSource);
 
-    // Compile the shader
     gl.compileShader(shader);
 
-    // Check the compile status
     const compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
     if (!compiled) {
-      // Something went wrong during compilation; get the error
-      const lastError = gl.getShaderInfoLog(shader);
-      errFn('*** Error compiling shader \'' + shader + '\':' + lastError + `\n` + shaderSource.split('\n').map((l,i) => `${i + 1}: ${l}`).join('\n'));
-      gl.deleteShader(shader);
-      return null;
+        const lastError = gl.getShaderInfoLog(shader);
+        errFn('*** Error compiling shader \'' + shader + '\':' + lastError + `\n` + shaderSource.split('\n').map((l,i) => `${i + 1}: ${l}`).join('\n'));
+        gl.deleteShader(shader);
+        return null;
     }
 
     return shader;
@@ -59,33 +53,29 @@ const defaultShaderType = [
     'FRAGMENT_SHADER',
 ];
 
-function createShaderFromScript(
-    gl, scriptId, opt_shaderType, opt_errorCallback) {
-  let shaderSource = '';
-  let shaderType;
-  const shaderScript = document.getElementById(scriptId);
-  if (!shaderScript) {
-    throw ('*** Error: unknown script element' + scriptId);
-  }
-  shaderSource = shaderScript.text;
-
-  if (!opt_shaderType) {
-    if (shaderScript.type === 'x-shader/x-vertex') {
-      shaderType = gl.VERTEX_SHADER;
-    } else if (shaderScript.type === 'x-shader/x-fragment') {
-      shaderType = gl.FRAGMENT_SHADER;
-    } else if (shaderType !== gl.VERTEX_SHADER && shaderType !== gl.FRAGMENT_SHADER) {
-      throw ('*** Error: unknown shader type');
+function createShaderFromScript(gl, scriptId, opt_shaderType, opt_errorCallback) {
+    let shaderSource = '';
+    let shaderType;
+    const shaderScript = document.getElementById(scriptId);
+    if (!shaderScript) {
+        throw ('*** Error: unknown script element' + scriptId);
     }
-  }
+    shaderSource = shaderScript.text;
 
-  return loadShader(
-      gl, shaderSource, opt_shaderType ? opt_shaderType : shaderType,
-      opt_errorCallback);
+    if (!opt_shaderType) {
+        if (shaderScript.type === 'x-shader/x-vertex') {
+        shaderType = gl.VERTEX_SHADER;
+        } else if (shaderScript.type === 'x-shader/x-fragment') {
+        shaderType = gl.FRAGMENT_SHADER;
+        } else if (shaderType !== gl.VERTEX_SHADER && shaderType !== gl.FRAGMENT_SHADER) {
+        throw ('*** Error: unknown shader type');
+        }
+    }
+
+    return loadShader(gl, shaderSource, opt_shaderType ? opt_shaderType : shaderType, opt_errorCallback);
 }
 
-function createProgram(
-    gl, shaders, opt_attribs, opt_locations, opt_errorCallback) {
+function createProgram(gl, shaders, opt_attribs, opt_locations, opt_errorCallback) {
   const errFn = opt_errorCallback || error;
   const program = gl.createProgram();
   shaders.forEach(function(shader) {
@@ -100,6 +90,7 @@ function createProgram(
     });
   }
   gl.linkProgram(program);
+  gl.validateProgram(program);
 
   // Check the link status
   const linked = gl.getProgramParameter(program, gl.LINK_STATUS);
@@ -114,24 +105,47 @@ function createProgram(
   return program;
 }
 
-var start_time;
+function init_program(gl, shaders) {
+    if (!shaders || shaders.length <= 0) {
+        return null;
+    }
 
-const side_length = 4.0;
+    const program = gl.createProgram();
+
+    for (const shader in shaders) {
+        gl.attachShader(program, shader);
+    }
+
+    gl.linkProgram(program);
+    gl.validateProgram(program);
+
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        const info = gl.getProgramInfoLog(program);
+        throw `could not compile WebGL program.\n\n${info}`;
+
+        gl.deleteProgram(program);
+        return null;
+    }
+
+    gl.useProgram(program);
+}
+
+var start_time;
 
 var geometry = [];
 var colors = [];
 var offsets = [];
 
 var tetrahedra_locations = [
-    [-1, 0],
-    [-1, 1],
-    [-1, 2],
-    [0, 0],
-    [0, 1],
-    [0, 2],
-    [1, 0],
-    [1, 1],
-    [1, 2],
+                                             [-4, 0],
+                                   [-3, -1], [-3, 0], [-3, 1],
+                         [-2, -2], [-2, -1], [-2, 0], [-2, 1], [-2, 2],
+               [-1, -3], [-1, -2], [-1, -1], [-1, 0], [-1, 1], [-1, 2], [-1, 3],
+      [0, -4], [ 0, -3], [ 0, -2], [ 0, -1], [ 0, 0], [ 0, 1], [ 0, 2], [ 0, 3], [0, 4],
+               [ 1, -3], [ 1, -2], [ 1, -1], [ 1, 0], [ 1, 1], [ 1, 2], [ 1, 3],
+                         [ 2, -2], [ 2, -1], [ 2, 0], [ 2, 1], [ 2, 2],
+                                   [ 3, -1], [ 3, 0], [ 3, 1],
+                                             [ 4, 0]
 ];
 
 function build_tetrahedron(tri_x, tri_y, size) {
@@ -166,7 +180,7 @@ function build_tetrahedron(tri_x, tri_y, size) {
     return { vertices, colours };
 }
 
-function construct_triangle_matrices() {
+function construct_triangle_matrices(side_length) {
     const len = side_length;
     const sqrt2 = Math.SQRT2;
 
@@ -359,7 +373,9 @@ function main() {
         return;
     }
 
-    construct_triangle_matrices();
+    const side_length = Math.min(canvas.clientWidth, canvas.clientHeight) / 20.0;
+
+    construct_triangle_matrices(side_length);
 
     var program = createProgramFromScripts(gl, ["vertex", "fragment"]);
 
@@ -419,12 +435,10 @@ function main() {
     gl.vertexAttribPointer(offsetLocation, size, type, normalize, stride, offset);
 
 
-    const translation = [150, 50, 0];
+    const translation = [canvas.clientWidth / 2.0, canvas.clientHeight / 2.0, 0];
 
     var matrix_base = m4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400);
     matrix_base = m4.translate(matrix_base, translation[0], translation[1], translation[2]);
-
-
 
     function render_loop(elapsed_time_ms) {
         // var rotation = [Math.PI * 40/180, Math.PI * 25/180, Math.PI * 325/180];

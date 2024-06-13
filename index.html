@@ -11,7 +11,7 @@
         <!-- <div class="frontpage-container">
             skarjala
         </div> -->
-        <canvas id="glcanvas" width="320" height="320"></canvas>
+        <canvas id="glcanvas" width="640" height="640"></canvas>
     </body>
     <script id="vertex" type="x-shader/x-vertex">
         attribute vec4 a_position;
@@ -63,7 +63,7 @@
             float sin_angle = sin(angle_rad);
         
             return mat4(
-                    cos_angle, sin_angle, 0, 0,
+                 cos_angle, sin_angle, 0, 0,
                 -sin_angle, cos_angle, 0, 0,
                 0,          0,         1, 0,
                 0,          0,         0, 1
@@ -78,10 +78,58 @@
                 -1, 1, 0, 1
             );
         }
+
+        mat4 make_scale(in vec3 dims) {
+            return mat4(
+                dims.x, 0, 0, 0,
+                0, dims.y, 0, 0,
+                0, 0, dims.z, 0,
+                0, 0, 0, 1
+            );
+        }
         
         void main() {
-            float dist = length(a_offset * 100.0);
-            mat4 transformation = u_matrix * make_translation(a_offset.xyz * 2.0*u_side_length) * make_y_rotation(u_time + dist * 0.01) * make_translation(-a_offset.xyz * 2.0*u_side_length);
+            float dist = (a_offset.x + a_offset.y) * -0.08;
+            float time_scaled = (u_time + dist) / 2.0;
+            float time_frac = time_scaled - floor(time_scaled);
+        
+            float t = time_frac;
+            float time_eased = (time_frac < 0.5)
+                ? 4.0*t*t*t
+                : 1.0 - pow(-2.0*t + 2.0, 5.0) / 2.0;
+
+            const float PI = 3.1415926535;
+            const float PI2 = 2.0 * PI;
+
+            float time_trunc = time_scaled - time_frac;
+            int anim_index = int(mod(time_trunc, 4.0));
+            float x_rotation;
+            float y_rotation;
+            if (anim_index == 0) {
+                x_rotation = PI * (4.0 -  8.0*time_eased)/12.0;
+                y_rotation = PI * (0.0 - 12.0*time_eased)/12.0;
+            }
+            else if (anim_index == 1) {
+                x_rotation = PI * (-4.0 + 12.0*time_eased)/12.0;
+                y_rotation = PI * ( 12.0 - 4.0*time_eased)/12.0;
+            }
+            else if (anim_index == 2) {
+                x_rotation = PI * (8.0 + 12.0*time_eased)/12.0;
+                y_rotation = PI * (8.0 -  4.0*time_eased)/12.0;
+            }
+            else if (anim_index == 3) {
+                x_rotation = PI * (20.0 - 16.0*time_eased)/12.0;
+                y_rotation = PI * ( 4.0 -  4.0*time_eased)/12.0;
+            }
+
+            vec3 offset_adjusted = vec3(a_offset.x, a_offset.y/sqrt(sqrt(2.0)), a_offset.z);
+
+            mat4 transformation = u_matrix
+                //* make_scale(vec3(1.0, 1.0, 1.0) + min(1.0, 10.0*abs(a_offset.x) + 10.0*abs(a_offset.y))*-0.05)
+                * make_translation(offset_adjusted.xyz * 2.0*u_side_length)
+                * make_y_rotation(y_rotation)
+                * make_x_rotation(x_rotation)
+                * make_translation(-a_offset.xyz * 2.0*u_side_length);
             gl_Position = transformation * a_position;
             v_color = a_color;
         }
