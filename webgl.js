@@ -119,56 +119,58 @@ var start_time;
 var geometry = [];
 var colors = [];
 
-var triangles = [
+var tetrahedra_locations = [
     [0, 0],
     [0, 1],
 ];
+
+function build_tetrahedron(tri_x, tri_y, size) {
+    const [x, y] = [tri_x, tri_y];
+    const sqrt2 = Math.SQRT2;
+
+    const vert0 = [x + size, 0,        -size/sqrt2];
+    const vert1 = [x - size, 0,        -size/sqrt2];
+    const vert2 = [0,        y + size,  size/sqrt2];
+    const vert3 = [0,        y - size,  size/sqrt2];
+
+    const vertices = [
+        ...vert0, ...vert1, ...vert2,
+        ...vert0, ...vert3, ...vert1,
+        ...vert0, ...vert2, ...vert3,
+        ...vert1, ...vert3, ...vert2,
+    ];
+
+    const colour0 = [200,  70, 120];
+    const colour1 = [70,  200, 120];
+    const colour2 = [200, 120,  70];
+    const colour3 = [120,  70, 200];
+
+    const colours = [
+        ...colour0, ...colour0, ...colour0,
+        ...colour1, ...colour1, ...colour1,
+        ...colour2, ...colour2, ...colour2,
+        ...colour3, ...colour3, ...colour3,
+    ];
+    
+    return { vertices, colours };
+}
 
 function construct_triangle_matrices() {
     const len = 100.0;
     const sqrt2 = Math.SQRT2;
 
     geometry = [];
-    for (var i = 0; i < triangles.length; ++i) {
-        const [xcoord, ycoord] = triangles[i];
+    colors = [];
+    for (var i = 0; i < tetrahedra_locations.length; ++i) {
+        const [xcoord, ycoord] = tetrahedra_locations[i];
+        const tetrahedron = build_tetrahedron(xcoord, ycoord, len);
+
+        geometry.push(...tetrahedron.vertices);
+        colors.push(...tetrahedron.colours);
     }
 
-    geometry = new Float32Array([
-        // len,   0,   -len/sqrt2,
-        // -len,  0,   -len/sqrt2,
-        // 0,     len,  len/sqrt2,
-        // 0,    -len,  len/sqrt2,
-        len,   0,   -len/sqrt2,
-        -len,  0,   -len/sqrt2,
-        0,     len,  len/sqrt2,
-
-        len,   0,   -len/sqrt2,
-        0,    -len,  len/sqrt2,
-        -len,  0,   -len/sqrt2,
-
-        len,   0,   -len/sqrt2,
-        0,     len,  len/sqrt2,
-        0,    -len,  len/sqrt2,
-
-        -len,  0,   -len/sqrt2,
-        0,    -len,  len/sqrt2,
-        0,     len,  len/sqrt2,
-    ]);
-
-    colors = new Uint8Array([
-        200,  70, 120,
-        200,  70, 120,
-        200,  70, 120,
-        70,  200, 120,
-        70,  200, 120,
-        70,  200, 120,
-        200, 120,  70,
-        200, 120,  70,
-        200, 120,  70,
-        120,  70, 200,
-        120,  70, 200,
-        120,  70, 200,
-    ]);
+    geometry = new Float32Array(geometry);
+    colors = new Uint8Array(colors);
 }
 
 function start() {
