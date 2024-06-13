@@ -116,14 +116,22 @@ function createProgram(
 
 var start_time;
 
+const side_length = 4.0;
+
 var geometry = [];
 var colors = [];
+var offsets = [];
 
 var tetrahedra_locations = [
-    [1, 0],
-    [0, 1],
-    [1, 1],
+    [-1, 0],
+    [-1, 1],
+    [-1, 2],
     [0, 0],
+    [0, 1],
+    [0, 2],
+    [1, 0],
+    [1, 1],
+    [1, 2],
 ];
 
 function build_tetrahedron(tri_x, tri_y, size) {
@@ -159,7 +167,7 @@ function build_tetrahedron(tri_x, tri_y, size) {
 }
 
 function construct_triangle_matrices() {
-    const len = 50.0;
+    const len = side_length;
     const sqrt2 = Math.SQRT2;
 
     geometry = [];
@@ -170,10 +178,27 @@ function construct_triangle_matrices() {
 
         geometry.push(...tetrahedron.vertices);
         colors.push(...tetrahedron.colours);
+        
+        const vert_per_tetrahedron = 12;
+        offsets.push(xcoord, ycoord, 0);
+        offsets.push(xcoord, ycoord, 0);
+        offsets.push(xcoord, ycoord, 0);
+        offsets.push(xcoord, ycoord, 0);
+        offsets.push(xcoord, ycoord, 0);
+        offsets.push(xcoord, ycoord, 0);
+        offsets.push(xcoord, ycoord, 0);
+        offsets.push(xcoord, ycoord, 0);
+        offsets.push(xcoord, ycoord, 0);
+        offsets.push(xcoord, ycoord, 0);
+        offsets.push(xcoord, ycoord, 0);
+        offsets.push(xcoord, ycoord, 0);
     }
+
+    console.log(offsets);
 
     geometry = new Float32Array(geometry);
     colors = new Uint8Array(colors);
+    offsets = new Float32Array(offsets);
 }
 
 function start() {
@@ -342,6 +367,8 @@ function main() {
     var colorLocation = gl.getAttribLocation(program, "a_color");
     var matrixLocation = gl.getUniformLocation(program, "u_matrix");
     var timeLocation = gl.getUniformLocation(program, "u_time");
+    var sideLengthLocation = gl.getUniformLocation(program, "u_side_length");
+    var offsetLocation = gl.getAttribLocation(program, "a_offset");
 
     var positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -350,6 +377,10 @@ function main() {
     var colorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW);
+
+    var offsetBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, offsetBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, offsets, gl.STATIC_DRAW);
 
     resizeCanvasToDisplaySize(gl.canvas);
 
@@ -378,11 +409,24 @@ function main() {
     var offset = 0;               // start at the beginning of the buffer
     gl.vertexAttribPointer(colorLocation, size, type, normalize, stride, offset);
 
+    gl.enableVertexAttribArray(offsetLocation);
+    gl.bindBuffer(gl.ARRAY_BUFFER, offsetBuffer);
+    var size = 3;
+    var type = gl.FLOAT;
+    var normalize = false;
+    var stride = 0;
+    var offset = 0;
+    gl.vertexAttribPointer(offsetLocation, size, type, normalize, stride, offset);
+
+
+    const translation = [150, 50, 0];
+
+    var matrix_base = m4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400);
+    matrix_base = m4.translate(matrix_base, translation[0], translation[1], translation[2]);
+
 
 
     function render_loop(elapsed_time_ms) {
-        var translation = [150, 150, 0];
-        var scale = [1, 1, 1];
         // var rotation = [Math.PI * 40/180, Math.PI * 25/180, Math.PI * 325/180];
 
         const time = elapsed_time_ms / 1000.0;
@@ -390,12 +434,10 @@ function main() {
         const rotation = [time, 0, 0];
 
         // Compute the matrices
-        var matrix = m4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400);
-        matrix = m4.translate(matrix, translation[0], translation[1], translation[2]);
-        matrix = m4.xRotate(matrix, rotation[0]);
-        matrix = m4.yRotate(matrix, rotation[1]);
-        matrix = m4.zRotate(matrix, rotation[2]);
-        matrix = m4.scale(matrix, scale[0], scale[1], scale[2]);
+        var matrix = matrix_base;
+        // var matrix = m4.xRotate(matrix_base, rotation[0]);
+        // matrix = m4.yRotate(matrix, rotation[1]);
+        // matrix = m4.zRotate(matrix, rotation[2]);
 
         // Set the matrix.
         gl.uniformMatrix4fv(matrixLocation, false, matrix);
@@ -408,6 +450,7 @@ function main() {
         gl.drawArrays(primitiveType, offset, count);
 
         gl.uniform1f(timeLocation, time);
+        gl.uniform1f(sideLengthLocation, side_length);
         gl.drawArrays(primitiveType, offset, count);
         window.requestAnimationFrame(render_loop);
     }

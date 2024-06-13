@@ -20,13 +20,70 @@
         uniform mat4 u_matrix;
         
         varying vec4 v_color;
-
+        
         uniform float u_time;
+        uniform float u_side_length;
+        attribute vec4 a_offset;
+        
+        mat4 make_translation(in vec3 offset) {
+            return mat4(
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                offset.x, offset.y, offset.z, 1
+            );
+        }
+        
+        mat4 make_x_rotation(in float angle_rad) {
+            float cos_angle = cos(angle_rad);
+            float sin_angle = sin(angle_rad);
+        
+            return mat4(
+                1, 0,         0,         0,
+                0, cos_angle, sin_angle, 0,
+                0,-sin_angle, cos_angle, 0,
+                0, 0,         0,         1
+            );
+        }
+        
+        mat4 make_y_rotation(in float angle_rad) {
+            float cos_angle = cos(angle_rad);
+            float sin_angle = sin(angle_rad);
+        
+            return mat4(
+                cos_angle, 0,-sin_angle, 0,
+                0,         1, 0,         0,
+                sin_angle, 0, cos_angle, 0,
+                0,         0, 0,         1
+            );
+        }
+        
+        mat4 make_z_rotation(in float angle_rad) {
+            float cos_angle = cos(angle_rad);
+            float sin_angle = sin(angle_rad);
+        
+            return mat4(
+                    cos_angle, sin_angle, 0, 0,
+                -sin_angle, cos_angle, 0, 0,
+                0,          0,         1, 0,
+                0,          0,         0, 1
+            );
+        }
+        
+        mat4 make_projection(in float width, in float height, in float depth) {
+            return mat4(
+                2.0 / width, 0, 0, 0,
+                0, -2.0 / height, 0, 0,
+                0, 0, 2.0 / depth, 0,
+                -1, 1, 0, 1
+            );
+        }
         
         void main() {
-          gl_Position = u_matrix * a_position;
-          //gl_Position.x = gl_Position.x * sin(u_time);
-          v_color = a_color;
+            float dist = length(a_offset * 100.0);
+            mat4 transformation = u_matrix * make_translation(a_offset.xyz * 2.0*u_side_length) * make_y_rotation(u_time + dist * 0.01) * make_translation(-a_offset.xyz * 2.0*u_side_length);
+            gl_Position = transformation * a_position;
+            v_color = a_color;
         }
     </script>
     
