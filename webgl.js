@@ -115,21 +115,21 @@ function createProgram(
 }
 
 const geometry = new Float32Array([
-    0,   0,  0,
-    0, 150,  0,
-    30,   0,  0,
-    0, 150,  0,
-    30, 150,  0,
-    30,   0,  0,
+    0,   0,    0,
+    100, 100,  0,
+    100, 0,    0,
+    // 0, 150,  0,
+    // 30, 150,  0,
+    // 30,   0,  0,
 ]);
 
 const colors = new Uint8Array([
     200,  70, 120,
     200,  70, 120,
     200,  70, 120,
-    200,  70, 120,
-    200,  70, 120,
-    200,  70, 120,
+    // 200,  70, 120,
+    // 200,  70, 120,
+    // 200,  70, 120,
 ]);
 
 var start_time;
@@ -297,6 +297,7 @@ function main() {
     var positionLocation = gl.getAttribLocation(program, "a_position");
     var colorLocation = gl.getAttribLocation(program, "a_color");
     var matrixLocation = gl.getUniformLocation(program, "u_matrix");
+    var timeLocation = gl.getUniformLocation(program, "u_time");
 
     var positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -361,9 +362,14 @@ function main() {
 
     gl.drawArrays(primitiveType, offset, count);
 
-    setInterval(function() {
+    function render_loop(time_stamp) {
+        // console.log(time_stamp);
+        gl.uniform1f(timeLocation, time_stamp / 1000.0);
+        gl.drawArrays(primitiveType, offset, count);
+        window.requestAnimationFrame(render_loop);
+    }
 
-    })
+    window.requestAnimationFrame(render_loop);
 }
 
 main();
