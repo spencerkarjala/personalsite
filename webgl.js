@@ -120,18 +120,21 @@ var geometry = [];
 var colors = [];
 
 var tetrahedra_locations = [
-    [0, 0],
+    [1, 0],
     [0, 1],
+    [1, 1],
+    [0, 0],
 ];
 
 function build_tetrahedron(tri_x, tri_y, size) {
-    const [x, y] = [tri_x, tri_y];
     const sqrt2 = Math.SQRT2;
+    const [x, y] = [tri_x, tri_y];
+    const [center_x, center_y] = [2*x*size, 2*y*size];
 
-    const vert0 = [x + size, 0,        -size/sqrt2];
-    const vert1 = [x - size, 0,        -size/sqrt2];
-    const vert2 = [0,        y + size,  size/sqrt2];
-    const vert3 = [0,        y - size,  size/sqrt2];
+    const vert0 = [center_x + size, center_y,        -size/sqrt2];
+    const vert1 = [center_x - size, center_y,        -size/sqrt2];
+    const vert2 = [center_x,        center_y + size,  size/sqrt2];
+    const vert3 = [center_x,        center_y - size,  size/sqrt2];
 
     const vertices = [
         ...vert0, ...vert1, ...vert2,
@@ -156,7 +159,7 @@ function build_tetrahedron(tri_x, tri_y, size) {
 }
 
 function construct_triangle_matrices() {
-    const len = 100.0;
+    const len = 50.0;
     const sqrt2 = Math.SQRT2;
 
     geometry = [];
@@ -384,7 +387,7 @@ function main() {
 
         const time = elapsed_time_ms / 1000.0;
 
-        const rotation = [time/4 * Math.PI, time/4/5.0 * Math.PI * Math.PI, 0];
+        const rotation = [time, 0, 0];
 
         // Compute the matrices
         var matrix = m4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400);
