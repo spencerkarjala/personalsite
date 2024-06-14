@@ -11,7 +11,7 @@
         <!-- <div class="frontpage-container">
             skarjala
         </div> -->
-        <canvas id="glcanvas" width="640" height="640"></canvas>
+        <canvas id="glcanvas" width='100' height="100" style="object-fit:contain;"></canvas>
     </body>
     <script id="vertex" type="x-shader/x-vertex">
         attribute vec4 a_position;
@@ -87,10 +87,16 @@
                 0, 0, 0, 1
             );
         }
+
+        vec4 apply_stretch_effect(in vec4 position) {
+            //float factor = 1.0 + pow(10.0, -abs(position.x));
+            float factor = 1.0 + abs(position.x*position.x);
+            return vec4(factor*position.x, position.y, position.z, position.w);
+        }
         
         void main() {
             float dist = (a_offset.x + a_offset.y) * -0.08;
-            float time_scaled = (u_time + dist) / 2.0;
+            float time_scaled = (u_time + dist) / 8.0;
             float time_frac = time_scaled - floor(time_scaled);
         
             float t = time_frac;
@@ -125,12 +131,11 @@
             vec3 offset_adjusted = vec3(a_offset.x, a_offset.y/sqrt(sqrt(2.0)), a_offset.z);
 
             mat4 transformation = u_matrix
-                //* make_scale(vec3(1.0, 1.0, 1.0) + min(1.0, 10.0*abs(a_offset.x) + 10.0*abs(a_offset.y))*-0.05)
                 * make_translation(offset_adjusted.xyz * 2.0*u_side_length)
                 * make_y_rotation(y_rotation)
                 * make_x_rotation(x_rotation)
                 * make_translation(-a_offset.xyz * 2.0*u_side_length);
-            gl_Position = transformation * a_position;
+            gl_Position = apply_stretch_effect(transformation * a_position);
             v_color = a_color;
         }
     </script>

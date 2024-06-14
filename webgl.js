@@ -6,19 +6,6 @@ function createProgramFromScripts(gl, shaderScriptIds, opt_attribs, opt_location
   }
   return createProgram(gl, shaders, opt_attribs, opt_locations, opt_errorCallback);
 }
-
-function resizeCanvasToDisplaySize(canvas, multiplier) {
-    multiplier = multiplier || 1;
-    const width  = canvas.clientWidth  * multiplier | 0;
-    const height = canvas.clientHeight * multiplier | 0;
-    if (canvas.width !== width ||  canvas.height !== height) {
-      canvas.width  = width;
-      canvas.height = height;
-      return true;
-    }
-    return false;
-}
-
 function error(msg) {
     if (topWindow.console) {
       if (topWindow.console.error) {
@@ -184,35 +171,35 @@ function construct_triangle_matrices(side_length) {
     const len = side_length;
     const sqrt2 = Math.SQRT2;
 
-    geometry = [];
-    colors = [];
+    var geometry_local = [];
+    var colors_local = [];
+    var offsets_local = [];
+
     for (var i = 0; i < tetrahedra_locations.length; ++i) {
         const [xcoord, ycoord] = tetrahedra_locations[i];
         const tetrahedron = build_tetrahedron(xcoord, ycoord, len);
 
-        geometry.push(...tetrahedron.vertices);
-        colors.push(...tetrahedron.colours);
+        geometry_local.push(...tetrahedron.vertices);
+        colors_local.push(...tetrahedron.colours);
         
         const vert_per_tetrahedron = 12;
-        offsets.push(xcoord, ycoord, 0);
-        offsets.push(xcoord, ycoord, 0);
-        offsets.push(xcoord, ycoord, 0);
-        offsets.push(xcoord, ycoord, 0);
-        offsets.push(xcoord, ycoord, 0);
-        offsets.push(xcoord, ycoord, 0);
-        offsets.push(xcoord, ycoord, 0);
-        offsets.push(xcoord, ycoord, 0);
-        offsets.push(xcoord, ycoord, 0);
-        offsets.push(xcoord, ycoord, 0);
-        offsets.push(xcoord, ycoord, 0);
-        offsets.push(xcoord, ycoord, 0);
+        offsets_local.push(xcoord, ycoord, 0);
+        offsets_local.push(xcoord, ycoord, 0);
+        offsets_local.push(xcoord, ycoord, 0);
+        offsets_local.push(xcoord, ycoord, 0);
+        offsets_local.push(xcoord, ycoord, 0);
+        offsets_local.push(xcoord, ycoord, 0);
+        offsets_local.push(xcoord, ycoord, 0);
+        offsets_local.push(xcoord, ycoord, 0);
+        offsets_local.push(xcoord, ycoord, 0);
+        offsets_local.push(xcoord, ycoord, 0);
+        offsets_local.push(xcoord, ycoord, 0);
+        offsets_local.push(xcoord, ycoord, 0);
     }
 
-    console.log(offsets);
-
-    geometry = new Float32Array(geometry);
-    colors = new Uint8Array(colors);
-    offsets = new Float32Array(offsets);
+    geometry = new Float32Array(geometry_local);
+    colors = new Uint8Array(colors_local);
+    offsets = new Float32Array(offsets_local);
 }
 
 function start() {
@@ -366,6 +353,20 @@ const m4 = {
     },
 };
 
+function update_canvas_size(canvas) {
+    if (!canvas) {
+        return;
+    }
+    const dpr = window.devicePixelRatio || 1.0;
+    const newWidth = Math.round(canvas.clientWidth * dpr);
+    const newHeight = Math.round(canvas.clientHeight * dpr);
+
+    canvas.width = newWidth;
+    canvas.height = newHeight;
+}
+
+var should_refresh_data = false;
+
 function main() {
     var canvas = document.querySelector("#glcanvas");
     var gl = canvas.getContext("webgl");
@@ -373,8 +374,9 @@ function main() {
         return;
     }
 
-    const side_length = Math.min(canvas.clientWidth, canvas.clientHeight) / 20.0;
+    update_canvas_size(gl.canvas);
 
+    const side_length = Math.min(canvas.clientWidth, canvas.clientHeight) / 15.0;
     construct_triangle_matrices(side_length);
 
     var program = createProgramFromScripts(gl, ["vertex", "fragment"]);
@@ -397,8 +399,6 @@ function main() {
     var offsetBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, offsetBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, offsets, gl.STATIC_DRAW);
-
-    resizeCanvasToDisplaySize(gl.canvas);
 
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -441,22 +441,21 @@ function main() {
     matrix_base = m4.translate(matrix_base, translation[0], translation[1], translation[2]);
 
     function render_loop(elapsed_time_ms) {
-        // var rotation = [Math.PI * 40/180, Math.PI * 25/180, Math.PI * 325/180];
+        if (should_refresh_data) {
+            update_canvas_size(gl.canvas);
 
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
+            const side_length = Math.min(canvas.clientWidth, canvas.clientHeight) / 15.0;
+            construct_triangle_matrices(side_length);
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+            should_refresh_data = false;
+        }
         const time = elapsed_time_ms / 1000.0;
-
         const rotation = [time, 0, 0];
 
-        // Compute the matrices
-        var matrix = matrix_base;
-        // var matrix = m4.xRotate(matrix_base, rotation[0]);
-        // matrix = m4.yRotate(matrix, rotation[1]);
-        // matrix = m4.zRotate(matrix, rotation[2]);
-
-        // Set the matrix.
-        gl.uniformMatrix4fv(matrixLocation, false, matrix);
+        gl.uniformMatrix4fv(matrixLocation, false, matrix_base);
     
-        // Draw the geometry.
         var primitiveType = gl.TRIANGLES;
         var offset = 0;
         var count = geometry.length / 3;
@@ -466,10 +465,18 @@ function main() {
         gl.uniform1f(timeLocation, time);
         gl.uniform1f(sideLengthLocation, side_length);
         gl.drawArrays(primitiveType, offset, count);
+
         window.requestAnimationFrame(render_loop);
     }
 
+    window.addEventListener("resize", handle_resize);
+
     window.requestAnimationFrame(render_loop);
+}
+
+// if the window is resized, signal to the next render loop that it should regenerate vertex data
+function handle_resize() {
+    should_refresh_data = true;
 }
 
 main();

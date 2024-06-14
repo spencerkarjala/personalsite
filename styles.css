@@ -8,6 +8,12 @@ body {
     font-family: 'c4type';
 }
 
+canvas {
+    width: max(100%, 400px);
+    height: max(80%, 320px);
+    display: block;
+}
+
 .frontpage-container {
     text-align: center;
     background-color: white;
