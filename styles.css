@@ -10,7 +10,7 @@ body {
 
 canvas {
     width: max(100%, 400px);
-    height: max(80%, 320px);
+    height: max(100%, 400px);
     display: block;
     position: fixed;
 }

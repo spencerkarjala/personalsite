@@ -370,7 +370,7 @@ function main() {
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
 
-    const side_length = Math.min(canvas.clientWidth, canvas.clientHeight) / 15.0;
+    const side_length = Math.min(canvas.clientWidth, canvas.clientHeight) / 20.0;
     construct_triangle_matrices(side_length);
 
     var program = createProgramFromScripts(gl, ["vertex", "fragment"]);
@@ -382,6 +382,7 @@ function main() {
     var sideLengthLocation = gl.getUniformLocation(program, "u_side_length");
     var offsetLocation = gl.getAttribLocation(program, "a_offset");
     var barycentricLocation = gl.getAttribLocation(program, "a_barycentric");
+    var resolutionLocation = gl.getUniformLocation(program, "u_resolution");
 
     var positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -465,6 +466,7 @@ function main() {
 
         gl.uniform1f(timeLocation, time);
         gl.uniform1f(sideLengthLocation, side_length);
+        gl.uniform1f(resolutionLocation, [canvas.clientWidth, canvas.clientHeight]);
         gl.drawArrays(primitiveType, offset, count);
 
         window.requestAnimationFrame(render_loop);
