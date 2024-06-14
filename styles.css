@@ -12,15 +12,17 @@ canvas {
     width: max(100%, 400px);
     height: max(80%, 320px);
     display: block;
+    position: fixed;
 }
 
 .frontpage-container {
     text-align: center;
-    background-color: white;
-    padding: 20px;
+    background-color: #f0f0f055;
+    padding: 40px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     font-size: 64px;
+    z-index: 1;
+    backdrop-filter: blur(5px);
 }
 
 @font-face {

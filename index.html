@@ -16,6 +16,7 @@
     <script id="vertex" type="x-shader/x-vertex">
         attribute vec4 a_position;
         attribute vec4 a_color;
+        attribute vec4 a_barycentric;
         
         uniform mat4 u_matrix;
         
@@ -24,6 +25,9 @@
         uniform float u_time;
         uniform float u_side_length;
         attribute vec4 a_offset;
+
+        varying vec3 v_barycentric;
+        varying vec3 v_position;
         
         mat4 make_translation(in vec3 offset) {
             return mat4(
@@ -90,12 +94,12 @@
 
         vec4 apply_stretch_effect(in vec4 position) {
             //float factor = 1.0 + pow(10.0, -abs(position.x));
-            float factor = 1.0 + abs(position.x*position.x);
+            float factor = 1.0 + abs(pow(position.x, 3.0));
             return vec4(factor*position.x, position.y, position.z, position.w);
         }
         
         void main() {
-            float dist = (a_offset.x + a_offset.y) * -0.08;
+            float dist = (a_offset.x + a_offset.y) * -0.1;
             float time_scaled = (u_time + dist) / 8.0;
             float time_frac = time_scaled - floor(time_scaled);
         
@@ -135,19 +139,37 @@
                 * make_y_rotation(y_rotation)
                 * make_x_rotation(x_rotation)
                 * make_translation(-a_offset.xyz * 2.0*u_side_length);
+
             gl_Position = apply_stretch_effect(transformation * a_position);
             v_color = a_color;
+            v_barycentric = a_barycentric.xyz;
         }
     </script>
     
     <script id="fragment" type="x-shader/x-fragment">
+        #extension GL_OES_standard_derivatives : enable
         precision mediump float;
-        
-        // Passed in from the vertex shader.
+
+        varying vec3 v_barycentric;
         varying vec4 v_color;
+
+        float edge() {
+            vec3 d = fwidth(v_barycentric);
+            vec3 f = step(d * 1.0, v_barycentric);
+            return min(min(f.x, f.y), f.z);
+        }
         
+        // got barycentric working with some help from https://tchayen.github.io/posts/wireframes-with-barycentric-coordinates
         void main() {
-           gl_FragColor = v_color;
+            float signed_dist = min(min(v_barycentric.x, v_barycentric.y), v_barycentric.z);
+            signed_dist = edge();
+
+            if (abs(signed_dist) < 0.01) {
+                gl_FragColor = v_color;
+            }
+            else {
+                gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+            }
         }
     </script>
 </html>

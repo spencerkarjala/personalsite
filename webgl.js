@@ -122,6 +122,7 @@ var start_time;
 var geometry = [];
 var colors = [];
 var offsets = [];
+var barycentric = [];
 
 var tetrahedra_locations = [
                                              [-4, 0],
@@ -174,6 +175,7 @@ function construct_triangle_matrices(side_length) {
     var geometry_local = [];
     var colors_local = [];
     var offsets_local = [];
+    var barycentric_local = [];
 
     for (var i = 0; i < tetrahedra_locations.length; ++i) {
         const [xcoord, ycoord] = tetrahedra_locations[i];
@@ -183,23 +185,24 @@ function construct_triangle_matrices(side_length) {
         colors_local.push(...tetrahedron.colours);
         
         const vert_per_tetrahedron = 12;
-        offsets_local.push(xcoord, ycoord, 0);
-        offsets_local.push(xcoord, ycoord, 0);
-        offsets_local.push(xcoord, ycoord, 0);
-        offsets_local.push(xcoord, ycoord, 0);
-        offsets_local.push(xcoord, ycoord, 0);
-        offsets_local.push(xcoord, ycoord, 0);
-        offsets_local.push(xcoord, ycoord, 0);
-        offsets_local.push(xcoord, ycoord, 0);
-        offsets_local.push(xcoord, ycoord, 0);
-        offsets_local.push(xcoord, ycoord, 0);
-        offsets_local.push(xcoord, ycoord, 0);
-        offsets_local.push(xcoord, ycoord, 0);
+        for (var j = 0; j < vert_per_tetrahedron; ++j) {
+            offsets_local.push(xcoord, ycoord, 0);
+        }
+        
+        const tri_per_tetrahedron = vert_per_tetrahedron / 3;
+        for (var j = 0; j < vert_per_tetrahedron; ++j) {
+            barycentric_local.push(1, 0, 0);
+            barycentric_local.push(0, 1, 0);
+            barycentric_local.push(0, 0, 1);
+        }
     }
+
+    console.log(offsets_local.length);
 
     geometry = new Float32Array(geometry_local);
     colors = new Uint8Array(colors_local);
     offsets = new Float32Array(offsets_local);
+    barycentric = new Float32Array(barycentric_local);
 }
 
 function start() {
@@ -362,6 +365,8 @@ function main() {
         return;
     }
 
+    gl.getExtension('OES_standard_derivatives');
+
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
 
@@ -376,6 +381,7 @@ function main() {
     var timeLocation = gl.getUniformLocation(program, "u_time");
     var sideLengthLocation = gl.getUniformLocation(program, "u_side_length");
     var offsetLocation = gl.getAttribLocation(program, "a_offset");
+    var barycentricLocation = gl.getAttribLocation(program, "a_barycentric");
 
     var positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -389,6 +395,10 @@ function main() {
     gl.bindBuffer(gl.ARRAY_BUFFER, offsetBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, offsets, gl.STATIC_DRAW);
 
+    var barycentricBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, barycentricBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, barycentric, gl.STATIC_DRAW);
+
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.enable(gl.CULL_FACE);
@@ -397,21 +407,20 @@ function main() {
 
     gl.enableVertexAttribArray(positionLocation);
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-    var size = 3;          // 3 components per iteration
-    var type = gl.FLOAT;   // the data is 32bit floats
-    var normalize = false; // don't normalize the data
-    var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-    var offset = 0;        // start at the beginning of the buffer
+    var size = 3;
+    var type = gl.FLOAT;
+    var normalize = false
+    var stride = 0;
+    var offset = 0;
     gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
 
     gl.enableVertexAttribArray(colorLocation);
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    var size = 3;                 // 3 components per iteration
-    var type = gl.UNSIGNED_BYTE;  // the data is 8bit unsigned values
-    var normalize = true;         // normalize the data (convert from 0-255 to 0-1)
-    var stride = 0;               // 0 = move forward size * sizeof(type) each iteration to get the next position
-    var offset = 0;               // start at the beginning of the buffer
+    var size = 3;
+    var type = gl.UNSIGNED_BYTE;
+    var normalize = true;
+    var stride = 0;
+    var offset = 0;
     gl.vertexAttribPointer(colorLocation, size, type, normalize, stride, offset);
 
     gl.enableVertexAttribArray(offsetLocation);
@@ -423,6 +432,9 @@ function main() {
     var offset = 0;
     gl.vertexAttribPointer(offsetLocation, size, type, normalize, stride, offset);
 
+    gl.enableVertexAttribArray(barycentricLocation);
+    gl.bindBuffer(gl.ARRAY_BUFFER, barycentricBuffer);
+    gl.vertexAttribPointer(barycentricLocation, 3, gl.FLOAT, false, 0, 0);
 
     const translation = [canvas.clientWidth / 2.0, canvas.clientHeight / 2.0, 0];
 
