@@ -353,18 +353,6 @@ const m4 = {
     },
 };
 
-function update_canvas_size(canvas) {
-    if (!canvas) {
-        return;
-    }
-    const dpr = window.devicePixelRatio || 1.0;
-    const newWidth = Math.round(canvas.clientWidth * dpr);
-    const newHeight = Math.round(canvas.clientHeight * dpr);
-
-    canvas.width = newWidth;
-    canvas.height = newHeight;
-}
-
 var should_refresh_data = false;
 
 function main() {
@@ -374,7 +362,8 @@ function main() {
         return;
     }
 
-    update_canvas_size(gl.canvas);
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
 
     const side_length = Math.min(canvas.clientWidth, canvas.clientHeight) / 15.0;
     construct_triangle_matrices(side_length);
@@ -469,14 +458,56 @@ function main() {
         window.requestAnimationFrame(render_loop);
     }
 
-    window.addEventListener("resize", handle_resize);
+    // from https://webglfundamentals.org/webgl/lessons/webgl-resizing-the-canvas.html
+    const canvasToDisplaySizeMap = new Map([[canvas, [300, 150]]]); 
+    function onResize(entries) {
+      for (const entry of entries) {
+        let width;
+        let height;
+        let dpr = window.devicePixelRatio;
+        // NOTE: Only this path gives the correct answer. the other paths are imperfect fallbacks
+        // for browsers that don't provide anyway to do this
+        if (entry.devicePixelContentBoxSize) {
+            width = entry.devicePixelContentBoxSize[0].inlineSize;
+            height = entry.devicePixelContentBoxSize[0].blockSize;
+            dpr = 1;
+        }
+        else if (entry.contentBoxSize) {
+            if (entry.contentBoxSize[0]) {
+                width = entry.contentBoxSize[0].inlineSize;
+                height = entry.contentBoxSize[0].blockSize;
+            }
+            else {
+                width = entry.contentBoxSize.inlineSize;
+                height = entry.contentBoxSize.blockSize;
+            }
+        }
+        else {
+            width = entry.contentRect.width;
+            height = entry.contentRect.height;
+        }
+        const displayWidth = Math.round(width * dpr);
+        const displayHeight = Math.round(height * dpr);
+        canvasToDisplaySizeMap.set(entry.target, [displayWidth, displayHeight]);
+      }
+
+      should_refresh_data = true;
+    }
+
+    function update_canvas_size(canvas) {
+        if (!canvas) {
+            return;
+        }
+        const [newWidth, newHeight] = canvasToDisplaySizeMap.get(canvas);
+    
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+    }
+
+    const resizeObserver = new ResizeObserver(onResize);
+    resizeObserver.observe(canvas, { box: 'content-box' });
 
     window.requestAnimationFrame(render_loop);
-}
-
-// if the window is resized, signal to the next render loop that it should regenerate vertex data
-function handle_resize() {
-    should_refresh_data = true;
 }
 
 main();
