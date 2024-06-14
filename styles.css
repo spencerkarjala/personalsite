@@ -4,8 +4,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #f0f0f0;
-    font-family: 'c4type';
+    background-color: #ded6de;
 }
 
 canvas {
@@ -17,12 +16,28 @@ canvas {
 
 .frontpage-container {
     text-align: center;
-    background-color: #f0f0f055;
+    background-color: #e6eaee33;
     padding: 40px;
-    border-radius: 10px;
+    border-radius: 1px;
     font-size: 64px;
     z-index: 1;
     backdrop-filter: blur(5px);
+    color: #392c31;
+    display: flex;
+    flex-direction: column;
+}
+
+.header-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.pagetitle {
+    font-family: 'c4type';
+}
+
+.details-container {
+    font-size: 12px;
 }
 
 @font-face {

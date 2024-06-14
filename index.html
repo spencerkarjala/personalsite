@@ -9,7 +9,15 @@
     </head>
     <body>
         <div class="frontpage-container">
-            skarjala
+            <div class="header-container">
+                <div class="pagetitle">
+                    skarjala
+                </div>
+                <hr>
+                <div class="details-container">
+                    spencerkarjala@gmail.com
+                </div>
+            </div>
         </div>
         <canvas id="glcanvas" width='100' height="100" style="object-fit:contain;"></canvas>
     </body>
@@ -29,6 +37,8 @@
 
         varying vec3 v_barycentric;
         varying vec3 v_position;
+        varying float v_time;
+        varying float v_time_index;
         
         mat4 make_translation(in vec3 offset) {
             return mat4(
@@ -105,32 +115,32 @@
             float time_frac = time_scaled - floor(time_scaled);
         
             float t = time_frac;
-            float time_eased = (time_frac < 0.5)
+            v_time = (time_frac < 0.5)
                 ? 4.0*t*t*t
                 : 1.0 - pow(-2.0*t + 2.0, 3.0) / 2.0;
 
             const float PI = 3.1415926535;
             const float PI2 = 2.0 * PI;
 
-            float time_trunc = time_scaled - time_frac;
-            int anim_index = int(mod(time_trunc, 4.0));
+            v_time_index = time_scaled - time_frac;
+            int anim_index = int(mod(v_time_index, 4.0));
             float x_rotation;
             float y_rotation;
             if (anim_index == 0) {
-                x_rotation = PI * (4.0 -  8.0*time_eased)/12.0;
-                y_rotation = PI * (0.0 - 12.0*time_eased)/12.0;
+                x_rotation = PI * (4.0 -  8.0*v_time)/12.0;
+                y_rotation = PI * (0.0 - 12.0*v_time)/12.0;
             }
             else if (anim_index == 1) {
-                x_rotation = PI * (-4.0 + 12.0*time_eased)/12.0;
-                y_rotation = PI * ( 12.0 - 4.0*time_eased)/12.0;
+                x_rotation = PI * (-4.0 + 12.0*v_time)/12.0;
+                y_rotation = PI * ( 12.0 - 4.0*v_time)/12.0;
             }
             else if (anim_index == 2) {
-                x_rotation = PI * (8.0 + 12.0*time_eased)/12.0;
-                y_rotation = PI * (8.0 -  4.0*time_eased)/12.0;
+                x_rotation = PI * (8.0 + 12.0*v_time)/12.0;
+                y_rotation = PI * (8.0 -  4.0*v_time)/12.0;
             }
             else if (anim_index == 3) {
-                x_rotation = PI * (20.0 - 16.0*time_eased)/12.0;
-                y_rotation = PI * ( 4.0 -  4.0*time_eased)/12.0;
+                x_rotation = PI * (20.0 - 16.0*v_time)/12.0;
+                y_rotation = PI * ( 4.0 -  4.0*v_time)/12.0;
             }
 
             //vec3 offset_adjusted = vec3(a_offset.x, a_offset.y/sqrt(sqrt(2.0)), a_offset.z);
@@ -154,18 +164,47 @@
 
         varying vec3 v_barycentric;
         varying vec4 v_color;
+        varying float v_time;
+        varying float v_time_index;
 
         // some help from https://catlikecoding.com/unity/tutorials/advanced-rendering/flat-and-wireframe-shading/
         float wireframe() {
             vec3 bary_derivative = fwidth(v_barycentric);
-            vec3 antialiased_wire = smoothstep(0.0 * bary_derivative, 1.0 * bary_derivative, v_barycentric);
+            vec3 antialiased_wire = smoothstep(-1.0 * bary_derivative, 2.0 * bary_derivative, v_barycentric);
+            antialiased_wire = antialiased_wire * antialiased_wire * antialiased_wire;
             return min(min(antialiased_wire.x, antialiased_wire.y), antialiased_wire.z);
+        }
+
+        const vec3 color0 = vec3(0.384, 0.412, 0.416);
+        const vec3 color1 = vec3(0.871, 0.839, 0.871);
+        const vec3 color2 = vec3(0.835, 0.745, 0.804);
+        const vec3 color3 = vec3(0.514, 0.569, 0.545);
+
+        vec3 get_color() {
+            vec3 output_color;
+            int anim_index = int(mod(v_time_index, 4.0));
+            if (anim_index == 0) {
+                output_color = mix(color1, color2, v_time);
+            }
+            else if (anim_index == 1) {
+                output_color = mix(color2, color0, v_time);
+            }
+            else if (anim_index == 2) {
+                output_color = mix(color0, color3, v_time);
+            }
+            else {
+                output_color = mix(color3, color1, v_time);
+            }
+            return output_color;
+
         }
         
         void main() {
-            float signed_dist = wireframe();
-            if (abs(signed_dist) < 1.0) {
-                gl_FragColor = vec4(v_color.r, v_color.g, v_color.b, 1.0) * 1.0 - signed_dist;
+            float signed_dist = abs(wireframe());
+            if (signed_dist < 1.0) {
+                vec3 color = get_color();
+                gl_FragColor = vec4(color.r, color.g, color.b, 1.0) * (1.0 - signed_dist);
+                //gl_FragColor = vec4(v_color.r, v_color.g, v_color.b, 1.0) * (1.0 - signed_dist);
             }
         }
     </script>
