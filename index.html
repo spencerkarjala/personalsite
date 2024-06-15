@@ -121,7 +121,6 @@
         }
 
         vec4 apply_stretch_effect(in vec4 position) {
-            //float factor = 1.0 + pow(10.0, -abs(position.x));
             float factor = 1.0 + abs(pow(position.x, 3.0));
             return vec4(factor*position.x, position.y, position.z, position.w);
         }
@@ -215,10 +214,6 @@
                 output_color = mix(color3, color1, v_time);
             }
             return output_color;
-        }
-
-        float noise(vec2 uv) {
-            return fract(sin(dot(uv.xy ,vec2(532.1231,1378.3453))) * 53211.1223);
         }
         
         void main() {
