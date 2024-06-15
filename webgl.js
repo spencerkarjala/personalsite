@@ -365,6 +365,18 @@ function main() {
         return;
     }
 
+    var svgbg = document.querySelector("#background-noise");
+    if (!svgbg) {
+        return;
+    }
+
+    function update_svg_dimensions(width, height) {
+        console.log("updating svg dimensions");
+        svgbg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    }
+
+    update_svg_dimensions(canvas.clientWidth, canvas.clientHeight);
+
     gl.getExtension('OES_standard_derivatives');
 
     canvas.width = canvas.clientWidth;
@@ -445,6 +457,7 @@ function main() {
     function render_loop(elapsed_time_ms) {
         if (should_refresh_data) {
             update_canvas_size(gl.canvas);
+            update_svg_dimensions(canvas.clientWidth, canvas.clientHeight);
 
             canvas.width = canvas.clientWidth;
             canvas.height = canvas.clientHeight;
