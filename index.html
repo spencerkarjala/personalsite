@@ -29,9 +29,9 @@
         </canvas>
         <svg id="background-noise" class="background-noise" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <filter id="noiseFilter">
-                <feTurbulence type="fractalNoise" baseFrequency="2.0" numOctaves="3" stitchTiles="stitch" />
+                <feTurbulence type="fractalNoise" baseFrequency="15.0" numOctaves="3" stitchTiles="stitch" />
                 <feComponentTransfer>
-                    <feFuncA type="linear" slope="0.1"/>
+                    <feFuncA type="linear" slope="0.3"/>
                 </feComponentTransfer>
             </filter>
             <rect width="100%" height="100%" filter="url(#noiseFilter)" />
