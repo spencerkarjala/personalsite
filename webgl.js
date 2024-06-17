@@ -356,6 +356,14 @@ const m4 = {
     },
 };
 
+var xMouse = undefined;
+var yMouse = undefined;
+function update_mouse_position(mousex, mousey) {
+    if (xMouse === undefined || yMouse === undefined) {
+        return;
+    }
+}
+
 var should_refresh_data = false;
 
 function main() {
@@ -364,6 +372,16 @@ function main() {
     if (!gl) {
         return;
     }
+
+    var body = document.querySelector("#background-container");
+    console.log(body);
+    document.onmousemove = function(event) {
+        xMouse = event.pageX;
+        yMouse = event.pageY;
+        body.style.setProperty("--x", `${xMouse}px`);
+        body.style.setProperty("--y", `${yMouse}px`);
+    }
+    setInterval(update_mouse_position, 33.333);
 
     var svgbg = document.querySelector("#background-noise");
     if (!svgbg) {

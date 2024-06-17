@@ -5,6 +5,23 @@ body {
     align-items: center;
     height: 100vh;
     background-color: #ded6de;
+    /* background-image: radial-gradient(
+        circle farthest-side at var(--x) var(--y),
+        #62696a 0%,
+        transparent 100%
+    ); */
+}
+
+@property --mouse-x {
+    syntax: "*";
+    inherits: false;
+    initial-value: 100px;
+}
+
+@property --mouse-y {
+    syntax: "*";
+    inherits: false;
+    initial-value: 100px;
 }
 
 .background-webgl {
