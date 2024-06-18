@@ -184,46 +184,43 @@ body {
 }
 
 @font-face {
-    font-family: 'nyghtserif';
-    src: url('fonts/NyghtSerif-LightItalic.woff2') format('woff2'),
-         url('fonts/NyghtSerif-LightItalic.woff')  format('woff'),
-         url('fonts/NyghtSerif-LightItalic.otf')   format('otf');
-    font-weight: light;
+    font-family: 'dinish';
+    src: url('fonts/Dinish-Regular.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'dinish';
+    src: url('fonts/Dinish-Italic.woff2') format('woff2');
+    font-weight: 500;
     font-style: italic;
 }
 
 @font-face {
-    font-family: 'nyghtserif';
-    src: url('fonts/NyghtSerif-RegularItalic.woff2') format('woff2'),
-         url('fonts/NyghtSerif-RegularItalic.woff')  format('woff'),
-         url('fonts/NyghtSerif-RegularItalic.otf')   format('otf');
-    font-weight: normal;
+    font-family: 'dinish';
+    src: url('fonts/Dinish-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'dinish-expanded';
+    src: url('fonts/DinishExpanded-Regular.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'dinish-expanded';
+    src: url('fonts/DinishExpanded-Italic.woff2') format('woff2');
+    font-weight: 500;
     font-style: italic;
 }
 
 @font-face {
-    font-family: 'nyghtserif';
-    src: url('fonts/NyghtSerif-MediumItalic.woff2') format('woff2'),
-         url('fonts/NyghtSerif-MediumItalic.woff')  format('woff'),
-         url('fonts/NyghtSerif-MediumItalic.otf')   format('otf');
-    font-weight: medium;
-    font-style: italic;
-}
-
-@font-face {
-    font-family: 'nyghtserif';
-    src: url('fonts/NyghtSerif-BoldItalic.woff2') format('woff2'),
-         url('fonts/NyghtSerif-BoldItalic.woff')  format('woff'),
-         url('fonts/NyghtSerif-BoldItalic.otf')   format('otf');
-    font-weight: bold;
-    font-style: italic;
-}
-
-@font-face {
-    font-family: 'nyghtserif';
-    src: url('fonts/NyghtSerif-DarkItalic.woff2') format('woff2'),
-         url('fonts/NyghtSerif-DarkItalic.woff')  format('woff'),
-         url('fonts/NyghtSerif-DarkItalic.otf')   format('otf');
-    font-weight: dark;
-    font-style: italic;
+    font-family: 'dinish-expanded';
+    src: url('fonts/DinishExpanded-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
 }
