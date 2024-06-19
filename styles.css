@@ -132,7 +132,7 @@ body {
 }
 
 .projects-section-header-separator {
-    color: #5a555a88;
+    color: #2b1d2b87;
     height: 0;
     margin: 0;
     padding: 0;
@@ -167,6 +167,10 @@ body {
     font-size: 1.5rem;
     font-weight: 500;
     font-style: italic;
+}
+
+.project-header-link {
+    text-decoration: none;
 }
 
 .project-description {
