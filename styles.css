@@ -152,13 +152,12 @@ body {
 }
 
 .project-content-column-text {
-    flex-grow: 2;
+    flex-grow: 1;
 }
 
 .project-content-column-image {
-    flex-grow: 1;
-    max-width: 400px;
-    object-fit:cover;
+    flex-grow: 0;
+    object-fit: cover;
 }
 
 .project-header {
@@ -229,8 +228,8 @@ body {
 @font-face {
     font-family: 'aukera';
     src: url('fonts/aukera.woff2') format('woff2'),
-         url('fonts/aukera.woff')  format('woff'),
-         url('fonts/aukera.otf')   format('opentype');
+        url('fonts/aukera.woff') format('woff'),
+        url('fonts/aukera.otf') format('opentype');
     font-weight: normal;
     font-style: normal;
 }
@@ -238,8 +237,8 @@ body {
 @font-face {
     font-family: 'c4type';
     src: url('fonts/C4v4-Regular.woff2') format('woff2'),
-         url('fonts/C4v4-Regular.woff')  format('woff'),
-         url('fonts/C4v.4-Regular.otf')  format('opentype');
+        url('fonts/C4v4-Regular.woff') format('woff'),
+        url('fonts/C4v.4-Regular.otf') format('opentype');
     font-weight: normal;
     font-style: normal;
 }
@@ -247,8 +246,8 @@ body {
 @font-face {
     font-family: 'geneseexcalibur';
     src: url('fonts/Genese-excalibur-boldstone.woff2') format('woff2'),
-         url('fonts/Genese-excalibur-boldstone.woff')  format('woff'),
-         url('fonts/Genese-excalibur-boldstone.otf')   format('opentype');
+        url('fonts/Genese-excalibur-boldstone.woff') format('woff'),
+        url('fonts/Genese-excalibur-boldstone.otf') format('opentype');
     font-weight: normal;
     font-style: normal;
 }
@@ -256,8 +255,8 @@ body {
 @font-face {
     font-family: 'laborisette';
     src: url('fonts/LaBorisette-Regular.woff2') format('woff2'),
-         url('fonts/LaBorisette-Regular.woff')  format('woff'),
-         url('fonts/LaBorisette-Regular.otf')   format('opentype');
+        url('fonts/LaBorisette-Regular.woff') format('woff'),
+        url('fonts/LaBorisette-Regular.otf') format('opentype');
     font-weight: normal;
     font-style: normal;
 }
@@ -265,8 +264,8 @@ body {
 @font-face {
     font-family: 'nyghtserif';
     src: url('fonts/NyghtSerif-Light.woff2') format('woff2'),
-         url('fonts/NyghtSerif-Light.woff')  format('woff'),
-         url('fonts/NyghtSerif-Light.otf')   format('otf');
+        url('fonts/NyghtSerif-Light.woff') format('woff'),
+        url('fonts/NyghtSerif-Light.otf') format('otf');
     font-weight: 400;
     font-style: normal;
 }
@@ -274,8 +273,8 @@ body {
 @font-face {
     font-family: 'nyghtserif';
     src: url('fonts/NyghtSerif-Regular.woff2') format('woff2'),
-         url('fonts/NyghtSerif-Regular.woff')  format('woff'),
-         url('fonts/NyghtSerif-Regular.otf')   format('otf');
+        url('fonts/NyghtSerif-Regular.woff') format('woff'),
+        url('fonts/NyghtSerif-Regular.otf') format('otf');
     font-weight: 500;
     font-style: normal;
 }
@@ -283,8 +282,8 @@ body {
 @font-face {
     font-family: 'nyghtserif';
     src: url('fonts/NyghtSerif-Medium.woff2') format('woff2'),
-         url('fonts/NyghtSerif-Medium.woff')  format('woff'),
-         url('fonts/NyghtSerif-Medium.otf')   format('otf');
+        url('fonts/NyghtSerif-Medium.woff') format('woff'),
+        url('fonts/NyghtSerif-Medium.otf') format('otf');
     font-weight: 600;
     font-style: normal;
 }
@@ -292,8 +291,8 @@ body {
 @font-face {
     font-family: 'nyghtserif';
     src: url('fonts/NyghtSerif-Bold.woff2') format('woff2'),
-         url('fonts/NyghtSerif-Bold.woff')  format('woff'),
-         url('fonts/NyghtSerif-Bold.otf')   format('otf');
+        url('fonts/NyghtSerif-Bold.woff') format('woff'),
+        url('fonts/NyghtSerif-Bold.otf') format('otf');
     font-weight: 700;
     font-style: normal;
 }
@@ -301,8 +300,8 @@ body {
 @font-face {
     font-family: 'nyghtserif';
     src: url('fonts/NyghtSerif-Dark.woff2') format('woff2'),
-         url('fonts/NyghtSerif-Dark.woff')  format('woff'),
-         url('fonts/NyghtSerif-Dark.otf')   format('otf');
+        url('fonts/NyghtSerif-Dark.woff') format('woff'),
+        url('fonts/NyghtSerif-Dark.otf') format('otf');
     font-weight: 800;
     font-style: normal;
 }
