@@ -148,15 +148,31 @@ body {
 .project-content-container {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     margin-bottom: 1rem;
 }
 
 .project-content-column-text {
-    flex-grow: 1;
+    padding: 0 1em;
+    width: 62%;
+}
+
+.project-content-column-image-container {
+    padding: 0 1rem;
+    align-content: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.project-content-column-image-link {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
 }
 
 .project-content-column-image {
-    flex-grow: 0;
+    max-width: 100%;
+    max-height: 100%;
     object-fit: cover;
 }
 
@@ -166,10 +182,15 @@ body {
     font-size: 1.5rem;
     font-weight: 500;
     font-style: italic;
+    text-decoration: underline;
 }
 
 .invisilink {
     text-decoration: none;
+    color: inherit;
+}
+
+.inlinelink {
     color: inherit;
 }
 
