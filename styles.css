@@ -169,8 +169,9 @@ body {
     font-style: italic;
 }
 
-.project-header-link {
+.invisilink {
     text-decoration: none;
+    color: inherit;
 }
 
 .project-description {
