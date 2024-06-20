@@ -373,7 +373,7 @@ function main() {
         return;
     }
 
-    var body = document.querySelector("#background-container");
+    var body = document.querySelector("#root-container");
     console.log(body);
     document.onmousemove = function(event) {
         xMouse = event.pageX;
@@ -383,7 +383,7 @@ function main() {
     }
     setInterval(update_mouse_position, 33.333);
 
-    var svgbg = document.querySelector("#background-noise");
+    var svgbg = document.querySelector("#front-page-background-noise");
     if (!svgbg) {
         return;
     }

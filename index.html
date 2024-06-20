@@ -7,29 +7,32 @@
         <link rel="stylesheet" href="styles.css" />
         <script src="webgl.js" type="module"></script>
     </head>
-    <body id="background-container" class="background-container">
-        <div class="frontpage-container">
-            <div class="header-container">
-                <div class="header-title">
-                    <div class="header-name">
-                        skarjala
+    <body>
+        <div class="frontpage-content-container">
+            <div class="frontpage-container">
+                <div class="header-container">
+                    <div class="header-title">
+                        <a href=".." class="invisilink">
+                            <div class="header-name">
+                                skarjala
+                            </div>
+                        </a>
+                        <div style="min-width: 4em;">•</div>
+                        <div class="header-contact">
+                            spencerkarjala@gmail.com
+                        </div>
                     </div>
-                    <div style="min-width: 4em;" >•</div>
-                    <div class="header-contact">
-                        spencerkarjala@gmail.com
+                    <hr style="width:100%; height:0;" />
+                    <div class="nav-container">
+                        <a class="nav-item" href="../about.html">About</a>
+                        <a class="nav-item" href="../experience.html">Experience</a>
+                        <a class="nav-item" href="../projects.html">Projects</a>
                     </div>
-                </div>
-                <hr style="width:100%; height:0;"/>
-                <div class="nav-container">
-                    <a class="nav-item" href="./about.html">About</a>
-                    <a class="nav-item" href="./experience.html">Experience</a>
-                    <a class="nav-item" href="./projects.html">Projects</a>
                 </div>
             </div>
         </div>
-        <canvas id="glcanvas" class="background-webgl" width='100' height="100">
-        </canvas>
-        <svg id="background-noise" class="background-noise" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <canvas id="glcanvas" class="front-page-background-webgl" width='100' height="100"></canvas>
+        <svg id="front-page-background-noise" class="front-page-background-noise" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <filter id="noiseFilter">
                 <feTurbulence type="fractalNoise" baseFrequency="15.0" numOctaves="3" stitchTiles="stitch" />
                 <feComponentTransfer>
