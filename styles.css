@@ -83,6 +83,38 @@ body {
     box-shadow: inset 0 0 0 1px #83918b33, 0 0 0.25rem #83918b33;
 }
 
+.generic-flex-container-vertical {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.generic-flex-container-horizontal {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.generic-flex-child-centered {
+    align-self: center;
+}
+
+.generic-halfwidth {
+    width: 25%;
+}
+
+.generic-onequarterwidth {
+    width: 50%;
+}
+
+.generic-threequarterwidth {
+    width: 75%;
+}
+
+.generic-fullwidth {
+    width: 100%;
+}
+
 /*
  * front-page specific styles
  */
@@ -127,6 +159,47 @@ body {
     flex-direction: column;
     flex-wrap: nowrap;
     align-items: center;
+}
+
+.elevated-container {
+    box-shadow: 5px 5px 2px;
+    align-self: stretch;
+    margin: 0 1rem 0 4rem;
+    display: flex;
+    flex-direction: row;
+}
+
+.elevated-container-label {
+    width: 2rem;
+    writing-mode: vertical-lr;
+    text-orientation: sideways;
+    background-color: #352b36;
+    padding: 1rem 0.75rem 1rem 0.25rem;
+    color: #fff;
+    font-family:'bondist';
+    font-weight: 500;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+}
+
+.elevated-container-content {
+    width: 100%;
+    padding: 1rem;
+    background-color: #ffffff33;
+    overflow: none;
+}
+
+.elevated-container-text {
+    text-align: start;
+    padding-top: 0;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    margin-top: 0;
+    font-family: 'dinish';
+    font-size: 1.15rem;
+    align-self: stretch;
 }
 
 /*
@@ -427,6 +500,13 @@ h3 {
     font-family: 'geistmono';
     src: url('fonts/GeistMono-Regular.woff2') format('woff2'),
          url('fonts/GeistMono-Regular.woff')  format('woff');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'bondist';
+    src: url('fonts/Bondist.woff2') format('woff2');
     font-weight: 500;
     font-style: normal;
 }
