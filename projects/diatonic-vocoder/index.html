@@ -29,62 +29,100 @@
                     </div>
                 </div>
 
-                <div class="elevated-container">
+                <!-- <div class="elevated-container">
                     <div class="elevated-container-label">
-                        DEMO
+                        IDEA
                     </div>
                     <div class="elevated-container-content generic-flex-container-vertical">
-                        <p class="elevated-container-text">
-                            Below is a recording of me playing four guitar chords - no effects are applied
-                            for a baseline comparison.
-                        </p>
-                        <div class="generic-flex-container-vertical">
-                            <audio class="generic-flex-child-centered" controls>
-                                <source src="./demo01-noeffect.mp3">
-                                Audio is not supported by your browser :(
-                            </audio>
+                    </div>
+                </div> -->
+                <div class="project-page-content">
+                    <p>
+                        When doing sound design, I spend a lot of time working with more experimental
+                        spectral effects. One common problem that I run into is that these tend to produce
+                        pretty chaotic and resonant sounds that can be difficult to fit into a mix.
+                    </p>
+                    <p>
+                        I ended up creating this diatonic-vocoder-type effect while experimenting with
+                        effects that would create sounds that are both interesting and easy to compose with.
+                        The idea is pretty simple; given a sound:
+                    </p>
+                    <ul>
+                        <li>take the Fourier transform of the sound to obtain its spectrum;</li>
+                        <li>decrease the amplitude of harmonics that correspond to undesirable notes; and</li>
+                        <li>take the inverse Fourier transform of the spectrum to obtain the updated sound.</li>
+                    </ul>
+                    <p>
+                        Worth noting: this will not create sounds that are "natural" or "realistic" due to
+                        mathy FFT issues, since zeroing frequency bins creates artifacts in the time domain.
+                        Thankfully, I think these flutter-y "spectral"-type artifacts sound pretty cool, so
+                        it works out - just don't expect to throw the effect on a full instrument bus to make
+                        it fit in with any other key signature.
+                    </p>
+                    <p>
+                        Source available on <a class="generic-nocolor" href="https://github.com/spencerkarjala/diatonic-vocoder-vst">GitHub</a>.
+                    </p>
+
+                    <div class="generic-spacer-medium"></div>
+
+                    <div class="elevated-container">
+                        <div class="elevated-container-label">
+                            DEMO
                         </div>
-                        <div style="height: 1rem"></div>
-                        <p class="elevated-container-text">
-                            The next clip uses the diatonic vocoder effect to remove all parts of the sound
-                            that correspond to C, D, and E notes. Notice that some of the notes have vanished,
-                            and that the sound is more muted/missing high-end. Also, the bass note (C) on the
-                            third chord has vanished.
-                        </p>
-                        <div class="generic-flex-container-vertical">
-                            <audio class="generic-flex-child-centered" controls>
-                                <source src="./demo02-noCDE.mp3">
-                                Audio is not supported by your browser :(
-                            </audio>
-                        </div>
-                        <div style="height: 1rem"></div>
-                        <p class="elevated-container-text">
-                            This third clip does the opposite of the second clip - it silences the parts of
-                            the sound that DON'T correspond to the C, D, and E notes. This clip is noticeably
-                            quieter (since most of the sound is filtered out!), but that low C on the third
-                            chord is back!
-                        </p>
-                        <div class="generic-flex-container-vertical">
-                            <audio class="generic-flex-child-centered" controls>
-                                <source src="./demo03-onlyCDE.mp3">
-                                Audio is not supported by your browser :(
-                            </audio>
-                        </div>
-                        <div style="height: 1rem"></div>
-                        <p class="elevated-container-text">
-                            Just for fun, this is what the effect sounds like when applied to drums. This
-                            example just quickly automates between a few arbitrary chords. Near the end,
-                            you can hear what it sounds like when only a couple note bands are let through.
-                        </p>
-                        <div class="generic-flex-container-vertical">
-                            <audio class="generic-flex-child-centered" controls>
-                                <source src="./demo04-drums.mp3">
-                                Audio is not supported by your browser :(
-                            </audio>
+                        <div class="elevated-container-content generic-flex-container-vertical">
+                            <p class="elevated-container-text">
+                                Below is a recording of me playing four guitar chords - no effects are applied
+                                for a baseline comparison.
+                            </p>
+                            <div class="generic-flex-container-vertical">
+                                <audio class="generic-flex-child-centered" controls>
+                                    <source src="./demo01-noeffect.mp3">
+                                    Audio is not supported by your browser :(
+                                </audio>
+                            </div>
+                            <div class="generic-spacer-small"></div>
+                            <p class="elevated-container-text">
+                                The next clip uses the diatonic vocoder effect to remove all parts of the sound
+                                that correspond to C, D, and E notes. Notice that some of the notes have vanished,
+                                and that the sound is more muted/missing high-end. Also, the bass note (C) on the
+                                third chord has vanished.
+                            </p>
+                            <div class="generic-flex-container-vertical">
+                                <audio class="generic-flex-child-centered" controls>
+                                    <source src="./demo02-noCDE.mp3">
+                                    Audio is not supported by your browser :(
+                                </audio>
+                            </div>
+                            <div class="generic-spacer-small"></div>
+                            <p class="elevated-container-text">
+                                This third clip does the opposite of the second clip - it silences the parts of
+                                the sound that DON'T correspond to the C, D, and E notes. This clip is noticeably
+                                quieter (since most of the sound is filtered out!), but that low C on the third
+                                chord is back!
+                            </p>
+                            <div class="generic-flex-container-vertical">
+                                <audio class="generic-flex-child-centered" controls>
+                                    <source src="./demo03-onlyCDE.mp3">
+                                    Audio is not supported by your browser :(
+                                </audio>
+                            </div>
+                            <div class="generic-spacer-small"></div>
+                            <p class="elevated-container-text">
+                                Just for fun, this is what the effect sounds like when applied to drums. This
+                                example just quickly automates between a few arbitrary chords. Near the end,
+                                you can hear what it sounds like when only a couple note bands are let through.
+                            </p>
+                            <div class="generic-flex-container-vertical">
+                                <audio class="generic-flex-child-centered" controls>
+                                    <source src="./demo04-drums.mp3">
+                                    Audio is not supported by your browser :(
+                                </audio>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="project-page-padding"></div>
+
+                <!-- <div class="project-page-padding"></div>
                 <div class="project-page-content">
                     <p>
                         A common problem that I run into when designing sounds is that the harmonic content
@@ -128,7 +166,7 @@
                     </div>
                 </div>
                 <div class="project-page-padding"></div>
-            </div>
+            </div> -->
             <div class="footer-container">
                 <hr style="width: 50%" />
                 <a id="totop" href="#" class="invisilink">

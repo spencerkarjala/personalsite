@@ -115,6 +115,18 @@ body {
     width: 100%;
 }
 
+.generic-spacer-small {
+    height: 1rem;
+}
+
+.generic-spacer-medium {
+    height: 2rem;
+}
+
+.generic-nocolor {
+    color: inherit;
+}
+
 /*
  * front-page specific styles
  */
@@ -164,7 +176,7 @@ body {
 .elevated-container {
     box-shadow: 5px 5px 2px;
     align-self: stretch;
-    margin: 0 1rem 0 4rem;
+    margin: 0 1rem 0 2rem;
     display: flex;
     flex-direction: row;
 }
@@ -220,13 +232,12 @@ body {
 }
 
 .project-page-content {
-    width: 100%;
-    height: 100%;
+    align-self: stretch;
     flex-grow: 1;
     font-family: 'dinish';
     font-size: 1.2rem;
     overflow-x: wrap;
-    padding: 0 1rem 1rem 1rem;
+    padding: 0 2rem 2rem 2rem;
 }
 
 .projects-section-content-container {
