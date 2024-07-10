@@ -29,11 +29,38 @@ body {
     overflow-y: scroll;
 }
 
-@media (min-width: 1080px) {
+h1 {
+    font-size: 1.6rem;
+    font-family: 'nyghtserif';
+    font-weight: 500;
+    border-bottom: 2px solid #392c31aa;
+    margin: 1rem 0rem;
+    padding: 0.25rem;
+}
+
+h2 {
+    font-size: 1.4rem;
+    font-family: 'dinish-expanded';
+    font-weight: 600;
+}
+
+h3 {
+    font-size: 1.2rem;
+    font-family: 'dinish-expanded';
+    font-weight: 300;
+}
+
+.header-container {
+    text-align: center;
+    padding: 1rem 5rem;
+    backdrop-filter: blur(5px);
+    background-image: url("res/paper.png");
+}
+
+@media all {
     .header-title {
         padding: 1rem 1rem 0.5rem 1rem;
         display: flex;
-        flex-direction: row;
         align-items: center;
     }
     .header-spacer {
@@ -47,12 +74,15 @@ body {
     }
 }
 
+@media (min-width: 1080px) {
+    .header-title {
+        flex-direction: row;
+    }
+}
+
 @media (max-width: 1080px) {
     .header-title {
-        padding: 1rem 1rem 0.5rem 1rem;
-        display: flex;
         flex-direction: column;
-        align-items: center;
     }
     .header-spacer {
         display: none;
@@ -60,12 +90,6 @@ body {
     .header-contact {
         display: none;
     }
-}
-
-.header-container {
-    text-align: center;
-    padding: 1rem 5rem;
-    backdrop-filter: blur(5px);
 }
 
 .footer-container {
@@ -80,9 +104,6 @@ body {
 .header-name {
     font-size: 64px;
     font-family: 'c4type';
-}
-
-.header-contact {
 }
 
 .nav-container {
@@ -163,6 +184,7 @@ body {
     background-color: #e6eaee41;
     z-index: 1;
     color: #392c31;
+    box-shadow: 0 0 0.5rem 0.25px #83918b33;
 }
 
 .front-page-background-webgl {
@@ -193,6 +215,7 @@ body {
     flex-direction: column;
     flex-wrap: nowrap;
     align-items: center;
+    box-shadow: 0 0 0.5rem 0.25px #83918b33;
 }
 
 .elevated-container {
@@ -361,6 +384,20 @@ body {
     margin-bottom: 2rem;
 }
 
+/*
+ * about-page-specific styles
+ */
+.about-page-content {
+    padding: 2rem;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'dinish';
+    color: #4a3c4a;
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 2rem;
+}
+
 .horizontal-center-content {
     display: flex;
     width: 100%;
@@ -399,11 +436,6 @@ body {
 
 code-comment {
     color: rgb(28, 150, 28);
-}
-
-h3 {
-    font-family: 'dinish-expanded';
-    font-weight: 600;
 }
 
 @font-face {
