@@ -345,28 +345,41 @@ h3 {
 
 .project-content-column-text {
     padding: 0 1em;
-    width: 62%;
+    flex-grow: 1;
+    flex-shrink: 1;
 }
 
-.project-content-column-image-container {
-    padding: 0 1rem;
-    align-content: center;
-    margin-left: auto;
-    margin-right: auto;
+@media all {
+    .project-content-column-image {
+        padding: 0 1rem;
+        margin-left: auto;
+        margin-right: auto;
+        object-fit: fill;
+        min-width: 200px;
+        max-width: 400px;
+        min-height: 100px;
+        max-height: 200px;
+    }
+
+    .project-content-column-image-link {
+        display: inline-block;
+        flex-grow: 1;
+        flex-shrink: 1;
+        width: auto;
+        height: auto;
+    }
+    
 }
 
-.project-content-column-image-link {
-    display: inline-block;
-    width: 100%;
-    height: 100%;
-}
+@media (max-width: 800px) {
+    .project-content-column-image-link {
+        display: none;
+    }
 
-.project-content-column-image {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: cover;
+    .project-content-column-image {
+        display: none;
+    }
 }
-
 .project-header {
     font-family: 'dinish';
     color: #4a3c4a;
