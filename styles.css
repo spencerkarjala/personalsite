@@ -212,6 +212,7 @@ h3 {
         z-index: 1;
         color: #392c31;
         width: max(800px, 60vw);
+        max-width: 1400px;
         display: flex;
         flex-direction: column;
         flex-wrap: nowrap;
@@ -223,7 +224,7 @@ h3 {
 @media (max-width: 800px) {
     .document-content-container {
         width: 100%;
-        min-width: 400px;
+        min-width: 600px;
     }
 }
 
@@ -362,9 +363,6 @@ h3 {
     }
 
     .project-content-column-image-link {
-        display: inline-block;
-        flex-grow: 1;
-        flex-shrink: 1;
         width: auto;
         height: auto;
     }
