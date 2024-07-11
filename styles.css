@@ -48,6 +48,17 @@ h3 {
     font-size: 1.2rem;
     font-family: 'dinish-expanded';
     font-weight: 300;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+h4 {
+    font-size: 1.1rem;
+    font-family: 'dinish-expanded';
+    font-weight: 300;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #83918b
 }
 
 .header-container {
@@ -136,6 +147,23 @@ h3 {
     flex-direction: row;
     align-items: center;
 }
+
+@media all {
+    .generic-flex-container-lrsplit {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+/* @media (max-width: 800px) {
+    .generic-flex-container-lrsplit {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+} */
 
 .generic-flex-child-centered {
     align-self: center;
