@@ -224,7 +224,7 @@ h3 {
 @media (max-width: 800px) {
     .document-content-container {
         width: 100%;
-        min-width: 600px;
+        min-width: 400px;
     }
 }
 
