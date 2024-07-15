@@ -78,9 +78,35 @@
                     <div class="code-block-container">
                         <div class="code-block-padding"></div>
                         <div class="code-block">
-                            <div class="code-block-line">bool UpdateDestination(FVector Destination, FVector Normal);</div>
+                            <div class="code-block-line">void UpdatePosition(const FVector& Destination, const FVector& DestNormal);</div>
                             <div class="code-block-line">void SetDestinationMesh(const UStaticMesh* Mesh);</div>
                             <div class="code-block-line">void SetPathMesh(const UStaticMesh* Mesh);</div>
+                        </div>
+                        <div class="code-block-padding"></div>
+                    </div>
+                    <p>
+                        Updating the meshes is easy enough to implement, since it only requires updating
+                        the corresponding components and the saved base mesh for the PathMesh.
+                    </p>
+                    <div class="code-block-container">
+                        <div class="code-block-padding"></div>
+                        <div class="code-block">
+                            <div class="code-block-line">void SetDestinationMesh(const UStaticMesh* Mesh) {</div>
+                            <div class="code-block-line">    check(DestinationMesh);</div>
+                            <div class="code-block-line">    check(IsValid(Mesh));</div>
+                            <div class="code-block-line">    DestinationMesh->SetStaticMesh(Mesh);</div>
+                            <div class="code-block-line">}</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line">void SetPathMesh(const UStaticMesh* Mesh) {</div>
+                            <div class="code-block-line">    check(IsValid(Mesh));</div>
+                            <div class="code-block-line">    PathMeshBase = Mesh;</div>
+                            <div class="code-block-line">    </div>
+                            <div class="code-block-line">    <code-comment>// loop over each premade SplineMeshComponent, updating their meshes</code-comment></div>
+                            <div class="code-block-line">    for (const auto& PathMeshComponent : PathMeshComponents) {</div>
+                            <div class="code-block-line">        check(PathMeshComponent);</div>
+                            <div class="code-block-line">        PathMeshComponent->SetStaticMesh(PathMeshBase);</div>
+                            <div class="code-block-line">    }</div>
+                            <div class="code-block-line">}</div>
                         </div>
                         <div class="code-block-padding"></div>
                     </div>
