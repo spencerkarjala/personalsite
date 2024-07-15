@@ -44,7 +44,9 @@
                         For this plugin, I'd like there to be an easy way to hook in a customizable cursor
                         that previews pathfinding results by tracing the path. Something like this:
                     </p>
-                    <img style="width: 100%" src="./previewpath-idea.png"></img>
+                    <div class="generic-shrink-container-62p project-image-container">
+                        <img class="project-image-content elevated-project-content" src="./previewpath-idea.png"></img>
+                    </div>
                     <p>
                         Since the path is always attached to the character, it would work as a SceneComponent
                         attached to the PlayerCharacter. Off the top of my head, a user would need to be able to:
@@ -75,29 +77,28 @@
                     <p>
                         That gives the following as the interface:
                     </p>
-                    <div class="code-block-container">
-                        <div class="code-block-padding"></div>
+                    <div class="code-block-container elevated-project-content">
                         <div class="code-block">
                             <div class="code-block-line">void UpdatePosition(const FVector& Destination, const FVector& DestNormal);</div>
                             <div class="code-block-line">void SetDestinationMesh(const UStaticMesh* Mesh);</div>
                             <div class="code-block-line">void SetPathMesh(const UStaticMesh* Mesh);</div>
                         </div>
-                        <div class="code-block-padding"></div>
                     </div>
                     <p>
                         Updating the meshes is easy enough to implement, since it only requires updating
                         the corresponding components and the saved base mesh for the PathMesh.
                     </p>
-                    <div class="code-block-container">
-                        <div class="code-block-padding"></div>
+                    <div class="code-block-container elevated-project-content">
                         <div class="code-block">
-                            <div class="code-block-line">void SetDestinationMesh(const UStaticMesh* Mesh) {</div>
+                            <div class="code-block-line">void SetDestinationMesh(const UStaticMesh* Mesh)</div>
+                            <div class="code-block-line">{</div>
                             <div class="code-block-line">    check(DestinationMesh);</div>
                             <div class="code-block-line">    check(IsValid(Mesh));</div>
                             <div class="code-block-line">    DestinationMesh->SetStaticMesh(Mesh);</div>
                             <div class="code-block-line">}</div>
                             <div class="code-block-line"> </div>
-                            <div class="code-block-line">void SetPathMesh(const UStaticMesh* Mesh) {</div>
+                            <div class="code-block-line">void SetPathMesh(const UStaticMesh* Mesh)</div>
+                            <div class="code-block-line">{</div>
                             <div class="code-block-line">    check(IsValid(Mesh));</div>
                             <div class="code-block-line">    PathMeshBase = Mesh;</div>
                             <div class="code-block-line">    </div>
@@ -108,7 +109,6 @@
                             <div class="code-block-line">    }</div>
                             <div class="code-block-line">}</div>
                         </div>
-                        <div class="code-block-padding"></div>
                     </div>
 
                     <div class="generic-spacer-small"></div>
@@ -128,35 +128,40 @@
                         <li>Make the cursor visible</li>
                     </ol>
                     <p>
-                        An implementation:
+                        Most of this is hopefully self-explanatory as shown below. Step 5, however, is not
+                        trivial, for a couple of reasons.
                     </p>
-                    <div class="code-block-container">
-                        <div class="code-block-padding"></div>
+                    <div class="code-block-container elevated-project-content">
                         <div class="code-block">
-                            <div class="code-block-line">bool UGNCursorComponent::UpdatePosition(const FVector& WorldDestination, const FVector& DestNormal) {</div>
+                            <div class="code-block-line">bool UGNCursorComponent::UpdatePosition(const FVector& WorldDestination, const FVector& DestNormal)</div>
+                            <div class="code-block-line">{    </div>
+                            <div class="code-block-line">    <code-comment>// 1. round destination to configured grid</code-comment></div>
                             <div class="code-block-line">    FVector DestinationRounded(</div>
-                            <div class="code-block-line">        round(WorldDestination.X / 100.0) * 100.0</div>
-                            <div class="code-block-line">        round(WorldDestination.Y / 100.0) * 100.0</div>
+                            <div class="code-block-line">        round(WorldDestination.X / GridSize) * GridSize</div>
+                            <div class="code-block-line">        round(WorldDestination.Y / GridSize) * GridSize</div>
                             <div class="code-block-line">        WorldDestination.Z</div>
                             <div class="code-block-line">    );</div>
                             <div class="code-block-line">    </div>
-                            <div class="code-block-line">    <code-comment>// don't update cursor if destination location hasn't changed</code-comment></div>
-                            <div class="code-block-line">    if ((DestinationRounded - CurrCursorLocation).Length() < 2e-4) {</div>
+
+                            <div class="code-block-line">    <code-comment>// 2. exit early if cursor destination hasn't changed</code-comment></div>
+                            <div class="code-block-line">    if ((DestinationRounded - CurrCursorLocation).Length() &lt; 2e-4) {</div>
                             <div class="code-block-line">        return true;</div>
                             <div class="code-block-line">    }</div>
                             <div class="code-block-line">    </div>
+
                             <div class="code-block-line">    const FVector& UpDir = FVector::UpVector;</div>
                             <div class="code-block-line">    FVector NormalDir = DestNormal;</div>
                             <div class="code-block-line">    NormalDir.Normalize();</div>
                             <div class="code-block-line">    </div>
                             <div class="code-block-line">    <code-comment>// hide cursor if floor slope at new dest. is too steep</code-comment></div>
                             <div class="code-block-line">    const double CosOfUpToNormalAngle = FVector::DotProduct(UpDir, NormalDir);</div>
-                            <div class="code-block-line">    if (CosOfUpToNormalDir < CosOfMaxInclineAngle) {</div>
+                            <div class="code-block-line">    if (CosOfUpToNormalDir &lt;= CosOfMaxInclineAngle) {</div>
                             <div class="code-block-line">        SetVisibility(false);</div>
                             <div class="code-block-line">        return true;</div>
                             <div class="code-block-line">    }</div>
                             <div class="code-block-line">    </div>
-                            <div class="code-block-line">    <code-comment>// perform pathfinding</code-comment></div>
+
+                            <div class="code-block-line">    <code-comment>// 3. perform pathfinding</code-comment></div>
                             <div class="code-block-line">    const auto* OwnerActor = GetOwner();</div>
                             <div class="code-block-line">    if (!IsValid(OwnerActor)) {</div>
                             <div class="code-block-line">        UE_LOG(LogGNCursorComopnent, Error, TEXT("Failed to get OwnerActor"));</div>
@@ -167,6 +172,14 @@
                             <div class="code-block-line">        WorldDestination</div>
                             <div class="code-block-line">    );</div>
                             <div class="code-block-line">    </div>
+
+                            <div class="code-block-line">    <code-comment>// 4. hide cursor if destination is not reachable</code-comment></div>
+                            <div class="code-block-line">    if (PathPoints.Num() &lt; 2) {</div>
+                            <div class="code-block-line">        SetVisibility(false);</div>
+                            <div class="code-block-line">        return true;</div>
+                            <div class="code-block-line">    }</div>
+                            <div class="code-block-line">    </div>
+
                             <div class="code-block-line">    <code-comment>// rotate destination mesh if floor slope is too flat</code-comment></div>
                             <div class="code-block-line">    FRotator UpVecToNormalRotation;</div>
                             <div class="code-block-line">    if (CosOfUpToNormalAngle &lt; 1.0 - UE_KINDA_SMALL_NUMBER) {</div>
@@ -175,24 +188,49 @@
                             <div class="code-block-line">        DestinationRounded.Z = floor(DestinationRounded.Z / 50.0) * 50.0 + 25.0;</div>
                             <div class="code-block-line">    }</div>
                             <div class="code-block-line">    </div>
+
+                            <div class="code-block-line">    <code-comment>// 5. update meshes to display the path</code-comment></div>
                             <div class="code-block-line">    UpdatePathMesh(PathPoints);</div>
                             <div class="code-block-line">    </div>
+
+                            <div class="code-block-line">    <code-comment>// 6. update destination mesh to show final point on path</code-comment></div>
                             <div class="code-block-line">    const auto LocalCursorDestinationPosition = DestinationRounded;</div>
                             <div class="code-block-line">    DestinationMeshComponent->SetRelativeLocation(LocalCursorDestinationPosition);</div>
                             <div class="code-block-line">    DestinationMeshComponent->SetWorldRotation(UpVecToNormalRotation);</div>
                             <div class="code-block-line">    </div>
+
+                            <div class="code-block-line">    <code-comment>// 7. save cursor state and make the cursor visible</code-comment></div>
                             <div class="code-block-line">    CurrCursorLocation = DestinationRounded;</div>
                             <div class="code-block-line">    SetVisibility(true);</div>
                             <div class="code-block-line">    </div>
                             <div class="code-block-line">    return true;</div>
                             <div class="code-block-line">}</div>
                         </div>
-                        <div class="code-block-padding"></div>
                     </div>
-
-                    <p>a</p>
-                    <p>a</p>
-                    <p>a</p>
+                    <div class="generic-spacer-small"></div>
+                    <p>
+                        <b>Problem 1</b>: Because the number of points along the path is variable, the number
+                        of splines needed to represent the path is also variable.
+                    </p>
+                    <p>
+                        Specifically, if there are N points along the path, then there are N-1 <code>SplineMeshComponent</code>s
+                        needed to display that path. This means that <code>SplineMeshComponent</code>s need to
+                        allocated to, connected to, disconnected from, and deleted from the cursor at runtime,
+                        which sounds complicated and messy.
+                    </p>
+                    <div class="generic-shrink-container-62p project-image-container">
+                        <img class="project-image-content elevated-project-content" src="./previewpath-segments-example.png"></img>
+                    </div>
+                    <p>
+                        Instead, a better approach is to pre-allocate a list of <code>SplineMeshComponent</code>s
+                        that are shown and hidden at runtime. If the path needs more spline sections, more will
+                        be allocated and connected to the cursor, but they will just be added to the pre-allocated
+                        list and treated the same as the others.
+                    </p>
+                    <div class="generic-shrink-container-90p project-image-container">
+                        <img class="project-image-content elevated-project-content" src="./previewpath-list-spline-idea.png"></img>
+                    </div>
+                    <div class="generic-spacer-small"></div>
 
                     <h1>Creating an editor tool</h1>
                     <p>
@@ -212,8 +250,7 @@
                         the level editor module has an <code>OnActorSelectionChanged</code> event that can be
                         subscribed to, using:
                     </p>
-                    <div class="code-block-container">
-                        <div class="code-block-padding"></div>
+                    <div class="code-block-container elevated-project-content">
                         <div class="code-block">
                             <!-- <div class="code-block-line"><code-comment></code-comment></div> -->
                             <div class="code-block-line">FLevelEditorModule& LevelEditor</div>
@@ -221,7 +258,6 @@
                             <div class="code-block-line">LevelEditor.OnActorSelectionChanged().AddUObject</div>
                             <div class="code-block-line">    .AddUObject(this, &AAAAAAAAAAHandleOnActorSelectionChanged);</div>
                         </div>
-                        <div class="code-block-padding"></div>
                     </div>
 
 
