@@ -61,6 +61,10 @@ h4 {
     color: #83918b
 }
 
+code {
+    font-size: 1rem;
+}
+
 .header-container {
     text-align: center;
     padding: 1rem 5rem;
@@ -195,6 +199,31 @@ h4 {
 
 .generic-nocolor {
     color: inherit;
+}
+
+.generic-shrink-container-50p {
+    width: 50%;
+    margin: auto;
+}
+
+.generic-shrink-container-62p {
+    width: 62%;
+    margin: auto;
+}
+
+.generic-shrink-container-75p {
+    width: 75%;
+    margin: auto;
+}
+
+.generic-shrink-container-90p {
+    width: 90%;
+    margin: auto;
+}
+
+.generic-shrink-container-95p {
+    width: 95%;
+    margin: auto;
 }
 
 /*
@@ -451,9 +480,15 @@ h4 {
     justify-content: center;
 }
 
+.elevated-project-content {
+    box-shadow: 5px 5px 5px #33333333;
+}
+
 .code-block-container {
     display: flex;
     flex-direction: row;
+    width: 95%;
+    margin: auto;
 }
 
 .code-block-padding {
@@ -463,7 +498,6 @@ h4 {
 .code-block {
     flex-grow: 1;
     background-color: #ffffff44;
-    width: 90%;
     text-align: start;
     padding: 0.5rem;
     font-size: 1rem;
@@ -471,18 +505,31 @@ h4 {
     font-family: 'geistmono';
     font-weight: 500;
     text-decoration: none;
-    box-shadow: 5px 5px 5px #33333333;
+    display: flex;
+    flex-direction: column;
+    overflow-x: auto;
 }
 
 .code-block-line {
-    white-space: break-spaces;
+    white-space: pre;
     margin: 0;
     padding: 0;
     margin: 0;
+    width: 100%;
 }
 
 code-comment {
     color: rgb(28, 150, 28);
+}
+
+.project-image-container {
+    padding: 1rem 0;
+}
+
+.project-image-content {
+    width: 100%;
+    box-sizing: border-box;
+    display: block;
 }
 
 @font-face {
