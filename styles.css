@@ -268,7 +268,7 @@ code {
         z-index: 1;
         color: #392c31;
         width: max(800px, 60vw);
-        max-width: 1400px;
+        max-width: 1200px;
         display: flex;
         flex-direction: column;
         flex-wrap: nowrap;
