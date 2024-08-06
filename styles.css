@@ -365,6 +365,10 @@ code {
     }
 }
 
+.demo-audio {
+    max-width: 90%;
+}
+
 /*
  * project-page specific styles
  */
