@@ -56,7 +56,30 @@
 
                     <div class="generic-spacer-medium"></div>
 
-                    <h1>Creating the cursor</h1>
+                    <h1>Project Overview</h1>
+                    <p>
+                        The primary goal of this plugin is to implement pathfinding that:
+                    </p>
+                    <ol>
+                        <li>Is aligned to a grid, similar to games like <a class="generic-nocolor" target="_blank" href="https://store.steampowered.com/app/250520/UnderRail/">UnderRail</a>;</li>
+                        <li>Has bounds and performs static object avoidance;</li>
+                        <li>Is modular, and can be integrated into a project with just a few settings tweaks.</li>
+                    </ol>
+                    <p>
+                        To make a nice, modular interface, the plugin should integrate into Unreal systems as much
+                        as possible to be uniform with its <code>NavigationSystem</code>. This way, the user can
+                        specify which areas should have grid navigation data in the same ways that they would do
+                        so with a regular navmesh implementation.
+                    </p>
+
+                    <div class="generic-spacer-medium"></div>
+                    <h1>Exploring Unreal Navigation</h1>
+                    <p>
+                        Thanks to a
+                        <a class="generic-nocolor" target="_blank" href="https://unrealingens.wordpress.com/2018/05/02/overriding-default-ue4-pathfinding-behavior-through-recastnavmesh/">blog post</a>
+                        by Nicholas Goldstein, it seems like it's possible to hook into <code>ARecastNavMesh</code>
+                        to provide custom pathfinding functionality.
+                    </p>
                     <p>
                         For this plugin, I'd like there to be an easy way to hook in a customizable cursor
                         that previews pathfinding results by tracing the path. Something like this:
