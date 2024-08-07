@@ -576,6 +576,13 @@ code-comment {
     display: block;
 }
 
+.project-image-subtitle {
+    max-width: 100%;
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+    text-align: center;
+}
+
 @font-face {
     font-family: 'aukera';
     src: url('fonts/aukera.woff2') format('woff2'),
