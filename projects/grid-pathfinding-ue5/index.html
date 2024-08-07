@@ -100,19 +100,15 @@
                         <p class="project-image-subtitle">ARecastNavMesh constructor providing default pathfinding implementations</p>
                     </div>
                     <p>
-                        If I understand correctly, this class serves as an interface
-                        for the engine to use 
-                        navigation.
+                        While this gives the insertion point for custom pathfinding logic, it doesn't provide
+                        much information on creating and maintaining map data. For this, the next step is to look
+                        into how <code>NavMeshBoundsVolume</code> works. Thankfully, it's relatively small, and
+                        is mainly used as a tool to update the navigation system when its bounds change.
                     </p>
-
-
-                    <p>
-                        
-                        
-                        However, that article stops at working
-                        navigation; we'll need to extend the system to query the environment based on the <code>NavMeshBoundVolume</code>s
-                        specified by the user in the editor.
-                    </p>
+                    <div class="generic-shrink-container-90p project-image-container">
+                        <img class="project-image-content elevated-project-content" src="./nav-mesh-bounds-volume-post-edit-change-property.png"></img>
+                        <p class="project-image-subtitle">PostEditChangeProperty in ANavMeshBoundsVolume.cpp</p>
+                    </div>
 
                     <div class="generic-spacer-medium"></div>
                     <h1>Creating the Cursor</h1>
