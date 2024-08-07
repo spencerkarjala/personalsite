@@ -85,10 +85,31 @@
                     <div class="generic-spacer-small"></div>
                     <h1>Exploring Unreal Navigation</h1>
                     <p>
-                        Thanks to a
-                        <a class="generic-nocolor" target="_blank" href="https://unrealingens.wordpress.com/2018/05/02/overriding-default-ue4-pathfinding-behavior-through-recastnavmesh/">blog post</a>
-                        by Nicholas Goldstein, it seems like it's possible to hook into <code>ARecastNavMesh</code>
-                        to provide custom pathfinding functionality. However, that article stops at working
+                        To start, I found a <a class="generic-nocolor" target="_blank" href="https://unrealingens.wordpress.com/2018/05/02/overriding-default-ue4-pathfinding-behavior-through-recastnavmesh/">blog post</a>
+                        by Nicholas Goldstein that outlines a process for hooking into <code>ARecastNavMesh</code>
+                        to provide custom pathfinding without re-compiling the engine. The main notable things
+                        about <code>ARecastNavMesh</code> to understand are:
+                    </p>
+                    <ol>
+                        <li>It is an interface for the engine to use <a class="generic-nocolor" target="_blank" href="https://recastnav.com/">Recast</a> navigation</li>
+                        <li>The Recast implementation is conveniently hidden behind a <a class="generic-nocolor" target="_blank" href="https://en.cppreference.com/w/cpp/language/pimpl">PImpl</a> pattern</li>
+                        <li>The <code>FindPath</code> function is actually a static function pointer that can be swapped with a custom implementation</li>
+                    </ol>
+                    <div class="generic-shrink-container-90p project-image-container">
+                        <img class="project-image-content elevated-project-content" src="./recast-nav-mesh-overridables.png"></img>
+                        <p class="project-image-subtitle">ARecastNavMesh constructor providing default pathfinding implementations</p>
+                    </div>
+                    <p>
+                        If I understand correctly, this class serves as an interface
+                        for the engine to use 
+                        navigation.
+                    </p>
+
+
+                    <p>
+                        
+                        
+                        However, that article stops at working
                         navigation; we'll need to extend the system to query the environment based on the <code>NavMeshBoundVolume</code>s
                         specified by the user in the editor.
                     </p>
