@@ -119,7 +119,7 @@
                     </p>
                     <div class="generic-shrink-container-90p project-image-container">
                         <img class="project-image-content elevated-project-content" src="./navsystem-enqueue-bounds-request.png"></img>
-                        <p class="project-image-subtitle">UNavigationBoundsV1 enqueueing and servicing a navigation bounds update request</p>
+                        <p class="project-image-subtitle">UNavigationSystemV1 enqueueing and servicing a navigation bounds update request</p>
                     </div>
 
                     <p>
@@ -137,6 +137,18 @@
                         handle bounds changes, and that <code>ARecastNavMesh</code> can be the integration point to handle
                         both <b>pathfinding</b> and <b>nav bounds</b>.
                     </p>
+
+                    <p>
+                        Step 3 shows the mechanism by which Unreal updates its navigation data when <code>NavMeshBoundsVolume</code>s
+                        are updated; specifically, the navigation system holds a <code>FNavigationDirtyAreasController</code>
+                        that keeps track of areas that need to be rebuilt. On tick, if any areas have been marked dirty,
+                        it signals to the <code>ARecastNavMesh</code> (a type of <code>ANavigationData</code>) to rebuild
+                        its navigation data.
+                    </p>
+                    <div class="generic-shrink-container-90p project-image-container">
+                        <img class="project-image-content elevated-project-content" src="./rebuild-dirty-areas-nav.png"></img>
+                        <p class="project-image-subtitle">FNavigationDirtyAreasController signaling a navigation data rebuild</p>
+                    </div>
 
                     <div class="generic-spacer-medium"></div>
                     <h1>Creating the Cursor</h1>
