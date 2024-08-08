@@ -137,26 +137,44 @@
                         <li>For each nav bounds update request, depending on what type of request it is: add, update, or remove the nav bound from the navigation system</li>
                         <li>If any bounds were created, changed, or deleted in the previous step, notify all available <code>ANavigationData</code> instances</li>
                         <li>If navigation building is available, mark any updated nav bounds as 'dirty' to trigger a navigation build</li>
-                        <li>If no <code>ANavigationData</code> currently exists, create it</li>
                     </ol>
-                    <p>
-                        In steps 2 and 4, <code>ANavigationData</code> is the parent class of <code>ARecastNavMesh</code>.
-                        This means that <code>ARecastNavMesh::OnNavigationBoundsChanged()</code> can be overriden to
-                        handle bounds changes, and that <code>ARecastNavMesh</code> can be the integration point to handle
-                        <i>both</i> pathfinding and nav bounds.
-                    </p>
+                    <div class="generic-shrink-container-90p project-image-container">
+                        <img class="project-image-content elevated-project-content" src="./navsystem-handle-bounds-update.png"></img>
+                        <p class="project-image-subtitle">UNavigationSystemV1 handling navigation bounds update requests (abridged)</p>
+                    </div>
 
                     <p>
-                        Step 3 shows the mechanism by which Unreal updates its navigation data when <code>NavMeshBoundsVolume</code>s
-                        are updated; specifically, the navigation system holds a <code>FNavigationDirtyAreasController</code>
-                        that keeps track of areas that need to be rebuilt. On tick, if any areas have been marked dirty,
-                        it signals to the <code>ARecastNavMesh</code> (a type of <code>ANavigationData</code>) to rebuild
-                        its navigation data.
+                        Steps 2 and 3 of this process are focused on building/rebuilding navigation data through the
+                        <code>RebuildDirtyAreas</code> and <code>OnNavigationBoundsChanged</code> functions, which are 
+                        both virtual within <code>ANavigationData</code> (the parent class of <code>ARecastNavMesh</code>).
+                        A tempting solution is to override these functions, but it looks like Unreal offers a better way
+                        forward.
+                    </p>
+
+                    <div class="generic-spacer-small"></div>
+                    <h2>Building Navigation Data</h2>
+                    <p>
+                        Interestingly, <code>ARecastNavMesh</code> does not implement either <code>OnNavigationBoundsChanged</code>
+                        or <code>RebuildDirtyAreas</code>. This means that it's using <code>ANavigationData</code>'s
+                        default implementation, which implies that Unreal must have a way for <code>ARecastNavMesh</code>
+                        to define how its builds are implemented. By looking at the base class functions, we can see that this is true:
                     </p>
                     <div class="generic-shrink-container-90p project-image-container">
-                        <img class="project-image-content elevated-project-content" src="./rebuild-dirty-areas-nav.png"></img>
-                        <p class="project-image-subtitle">FNavigationDirtyAreasController signaling a navigation data rebuild</p>
+                        <img class="project-image-content elevated-project-content" src="./navdata-generation-code.png"></img>
+                        <p class="project-image-subtitle">ANavigationData handling rebuilds on bounds changes</p>
                     </div>
+
+                    <p>
+                        It turns out that the <code>ANavigationData</code> class defines a pointer to an <code>FNavDataGenerator</code>
+                        object that implements navigation data builds. This means that Unreal will <i>automatically call nav data builds for us</i>
+                        if we implement an <code>FNavDataGenerator</code> and specify it in our custom <code>ARecastNavMesh</code>
+                        implementation.
+                    </p>
+                    <p>
+                        The main challenge with building navigation data from <code>FNavDataGenerator</code> is that it
+                        will need to do lots of world queries at build time to create the tilemap. The engine code solves
+                        this by storing a reference to the <code>ARecastNavMesh</code> that is associated with the generator.
+                    </p>
 
                     <div class="generic-spacer-medium"></div>
                     <h1>Creating the Cursor</h1>
