@@ -102,9 +102,17 @@
                     </div>
                     <p>
                         While this gives the insertion point for custom pathfinding logic, it doesn't provide
-                        much information on creating and maintaining map data. For this, the next step is to look
-                        into how <code>NavMeshBoundsVolume</code> works. Thankfully, it's relatively small, and
-                        is mainly used as a tool to update the navigation system when its bounds change.
+                        much information on creating and maintaining map data. This is also where the article
+                        ends, so we'll have to look more closely at the engine source code next.
+                    </p>
+
+                    <div class="generic-spacer-small"></div>
+                    <h2>Navigation Bounds</h2>
+                    <p>
+                        In Unreal Engine, editor users place <code>NavMeshBoundVolume</code>s to specify the
+                        areas of geometry that should be navigable. Thankfully, the source code for <code>NavMeshBoundVolume</code>
+                        is relatively small — they're mainly used as a proxy to tell the navigation system that
+                        its bounds have changed.
                     </p>
                     <div class="generic-shrink-container-90p project-image-container">
                         <img class="project-image-content elevated-project-content" src="./nav-mesh-bounds-volume-post-edit-change-property.png"></img>
@@ -123,7 +131,7 @@
                     </div>
 
                     <p>
-                        To perform the nav bounds update, <code>PerformNavigationBoundsUpdate</code> does the following:
+                        To update the navigation bounds, <code>PerformNavigationBoundsUpdate</code> does the following:
                     </p>
                     <ol type="1">
                         <li>For each nav bounds update request, depending on what type of request it is: add, update, or remove the nav bound from the navigation system</li>
@@ -135,7 +143,7 @@
                         In steps 2 and 4, <code>ANavigationData</code> is the parent class of <code>ARecastNavMesh</code>.
                         This means that <code>ARecastNavMesh::OnNavigationBoundsChanged()</code> can be overriden to
                         handle bounds changes, and that <code>ARecastNavMesh</code> can be the integration point to handle
-                        both <b>pathfinding</b> and <b>nav bounds</b>.
+                        <i>both</i> pathfinding and nav bounds.
                     </p>
 
                     <p>
