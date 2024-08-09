@@ -97,7 +97,7 @@
                         <li>The <code>FindPath</code> function is actually a function pointer that can be swapped with a custom implementation</li>
                     </ol>
                     <div class="generic-shrink-container-90p project-image-container">
-                        <img class="project-image-content elevated-project-content" src="./recast-nav-mesh-overridables.png"></img>
+                        <img class="project-image-content elevated-project-content generic-maxwidth-600px" src="./recast-nav-mesh-overridables.png"></img>
                         <p class="project-image-subtitle">ARecastNavMesh constructor providing default pathfinding implementations</p>
                     </div>
                     <p>
@@ -115,7 +115,7 @@
                         its bounds have changed.
                     </p>
                     <div class="generic-shrink-container-90p project-image-container">
-                        <img class="project-image-content elevated-project-content" src="./nav-mesh-bounds-volume-post-edit-change-property.png"></img>
+                        <img class="project-image-content elevated-project-content generic-maxwidth-700px" src="./nav-mesh-bounds-volume-post-edit-change-property.png"></img>
                         <p class="project-image-subtitle">PostEditChangeProperty in ANavMeshBoundsVolume.cpp</p>
                     </div>
 
@@ -126,7 +126,7 @@
                         system services any available navigation bounds update requests.
                     </p>
                     <div class="generic-shrink-container-90p project-image-container">
-                        <img class="project-image-content elevated-project-content" src="./navsystem-enqueue-bounds-request.png"></img>
+                        <img class="project-image-content elevated-project-content generic-maxwidth-700px" src="./navsystem-enqueue-bounds-request.png"></img>
                         <p class="project-image-subtitle">UNavigationSystemV1 enqueueing and servicing a navigation bounds update request</p>
                     </div>
 
@@ -139,7 +139,7 @@
                         <li>If navigation building is available, mark any updated nav bounds as 'dirty' to trigger a navigation build</li>
                     </ol>
                     <div class="generic-shrink-container-90p project-image-container">
-                        <img class="project-image-content elevated-project-content" src="./navsystem-handle-bounds-update.png"></img>
+                        <img class="project-image-content elevated-project-content generic-maxwidth-700px" src="./navsystem-handle-bounds-update.png"></img>
                         <p class="project-image-subtitle">UNavigationSystemV1 handling navigation bounds update requests (abridged)</p>
                     </div>
 
@@ -160,7 +160,7 @@
                         to define how its builds are implemented. By looking at the base class functions, we can see that this is true:
                     </p>
                     <div class="generic-shrink-container-90p project-image-container">
-                        <img class="project-image-content elevated-project-content" src="./navdata-generation-code.png"></img>
+                        <img class="project-image-content elevated-project-content generic-maxwidth-700px" src="./navdata-generation-code.png"></img>
                         <p class="project-image-subtitle">ANavigationData handling rebuilds on bounds changes</p>
                     </div>
 
@@ -172,8 +172,10 @@
                     </p>
                     <p>
                         The main challenge with building navigation data from <code>FNavDataGenerator</code> is that it
-                        will need to do lots of world queries at build time to create the tilemap. The engine code solves
-                        this by storing a reference to the <code>ARecastNavMesh</code> that is associated with the generator.
+                        will need to do lots of world queries at build time to create the tilemap. The engine code in 
+                        <code>FRecastNavMeshGenerator</code> solves this by storing a reference to the <code>ARecastNavMesh</code>
+                        that is associated with the generator. That's likely what I will do in the interest of time, but
+                        this does mean that the generator class will be pretty tightly coupled to the nav data actor.
                     </p>
 
                     <div class="generic-spacer-medium"></div>
@@ -183,7 +185,7 @@
                         that previews pathfinding results by tracing the path. Something like this:
                     </p>
                     <div class="generic-shrink-container-62p project-image-container">
-                        <img class="project-image-content elevated-project-content" src="./previewpath-idea.png"></img>
+                        <img class="project-image-content elevated-project-content generic-maxwidth-500px" src="./previewpath-idea.png"></img>
                     </div>
                     <p>
                         Since the path is always attached to the character, it would work as a SceneComponent
@@ -360,7 +362,7 @@
                         which sounds complicated and messy.
                     </p>
                     <div class="generic-shrink-container-62p project-image-container">
-                        <img class="project-image-content elevated-project-content" src="./previewpath-segments-example.png"></img>
+                        <img class="project-image-content elevated-project-content generic-maxwidth-500px" src="./previewpath-segments-example.png"></img>
                     </div>
                     <p>
                         Instead, a better approach is to pre-allocate a list of <code>SplineMeshComponent</code>s
@@ -369,14 +371,14 @@
                         list and treated the same as the others.
                     </p>
                     <div class="generic-shrink-container-90p project-image-container">
-                        <img class="project-image-content elevated-project-content" src="./previewpath-list-spline-idea.png"></img>
+                        <img class="project-image-content elevated-project-content generic-maxwidth-700px" src="./previewpath-list-spline-idea.png"></img>
                     </div>
 
                     <p>
                         <b>Problem 2</b>: The ends of the <code>SplineMeshComponent</code>s are in the right
                         places, but they don't line up quite right.
                     </p>
-                    <div class="generic-shrink-container-62p project-image-container">
+                    <div class="generic-shrink-container-62p project-image-container generic-maxwidth-500px">
                         <img class="project-image-content elevated-project-content" src="./cursor-misaligned-corner.png"></img>
                     </div>
                     <p>
