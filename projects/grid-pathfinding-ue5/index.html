@@ -83,7 +83,7 @@
                         supports grid-aligned movement.
                     </p>
                     <p>
-                        Here's a quick mockup of what I think this looks like from the editor's side:
+                        Here's a quick mockup of what this looks like from the editor's side:
                     </p>
                     <ul>
                         <li><b>Navigation bounds</b> (<code>NavMeshBoundsVolume</code>) are placed in the world, which specifies to the navigation system which geometry needs navigation data</li>
@@ -113,8 +113,8 @@
                     </div>
                     <p>
                         While this gives the insertion point for custom pathfinding logic, it doesn't provide
-                        much information on creating and maintaining map data. This is also where the article
-                        ends, so we'll have to look more closely at the engine source code next.
+                        much information on creating and maintaining bounded map data. This is also where the
+                        article ends, so we'll have to look more closely at the engine source code next.
                     </p>
 
                     <div class="generic-spacer-small"></div>
@@ -185,8 +185,9 @@
                         The main challenge with building navigation data from <code>FNavDataGenerator</code> is that it
                         will need to do lots of world queries at build time to create the tilemap. The engine code in 
                         <code>FRecastNavMeshGenerator</code> solves this by storing a reference to the <code>ARecastNavMesh</code>
-                        that is associated with the generator. That's likely what I will do in the interest of time, but
-                        this does mean that the generator class will be pretty tightly coupled to the nav data actor.
+                        that is associated with the generator. This isn't a perfect solution, since it means the generator class
+                        can end up pretty tightly coupled to the nav data actor, but we will likely do the same since those
+                        abstractions can be built later.
                     </p>
 
                     <div class="generic-spacer-medium"></div>
