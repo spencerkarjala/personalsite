@@ -71,6 +71,18 @@
                         so with a regular navmesh implementation.
                     </p>
                     <p>
+                        Before talking about system design, it's important to understand how exactly the system will be used.
+                        Off the top of my head, these are the main use cases:
+                    </p>
+                    <ul>
+                        <li>From the editor, I want to specify which parts of my static map geometry are navigable</li>
+                        <li>From the editor, I want to create links that can teleport the player between different parts of one navigable zone or between multiple navigable zones</li>
+                        <li>From the editor, I want to save and load navigation data</li>
+                        <li>From blueprint, I want to query for a path between two world positions staying within specified navigable zones</li>
+                        <li>From blueprint, I want to dispatch a command for a movement-enabled actor to travel to a new location</li>
+                        <li>From blueprint, I want a component to preview navigable paths for player visualization</li>
+                    </ul>
+                    <p>
                         Here's how the navigation system should work:
                     </p>
                     <ul>
