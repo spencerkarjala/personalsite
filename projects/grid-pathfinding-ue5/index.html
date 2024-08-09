@@ -104,7 +104,7 @@
                     </p>
                     <ol>
                         <li>It is an interface for the engine to use <a class="generic-nocolor" target="_blank" href="https://recastnav.com/">Recast</a> navigation</li>
-                        <li>The Recast implementation is conveniently hidden behind a <a class="generic-nocolor" target="_blank" href="https://en.cppreference.com/w/cpp/language/pimpl">PImpl</a> pattern</li>
+                        <li>The Recast implementation is conveniently hidden behind a <a class="generic-nocolor" target="_blank" href="https://en.cppreference.com/w/cpp/language/pimpl">PImpl</a> pattern, meaning the implementation can be switched out</li>
                         <li>The <code>FindPath</code> function is actually a function pointer that can be swapped with a custom implementation</li>
                     </ol>
                     <div class="generic-shrink-container-90p project-image-container">
