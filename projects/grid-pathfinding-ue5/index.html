@@ -223,8 +223,14 @@
                         <li><code>TStatId SyncTask::GetStatId()</code></li>
                         <li><code>void SyncTask::DoWork()</code></li>
                         <li><code>bool SyncTask::CanAbandon()</code></li>
-                        <li><code>void SyncTask::Abandon()</code> (if <code>CanAbandon</code> returns true)</li>
+                        <li><code>void SyncTask::Abandon()</code> (only if <code>CanAbandon</code> returns true)</li>
                     </ul>
+
+                    <p>
+                        With that implemented, we can set the generator in the RecastNavMesh class and try to move a
+                        nav bound in the editor. Using the below code, a log pops up in the window and we know that
+                        the task is being kicked off successfully!
+                    </p>
 
                     <div class="generic-spacer-medium"></div>
                     <h1>Creating the Cursor</h1>
