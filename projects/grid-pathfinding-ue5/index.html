@@ -191,6 +191,38 @@
                     </p>
 
                     <div class="generic-spacer-medium"></div>
+                    <h1>Creating the Unreal Interface</h1>
+
+                    <p>
+                        In the previous section, we learned that the following can be done to implement custom pathfinding:
+                    </p>
+                    <ul>
+                        <li>Implement an <code>ANavigationData</code>-derived class (specifically, <code>ARecastNavMesh</code>)</li>
+                        <li>Implement an <code>FNavDataGenerator</code>-derived class to create the navigation data</li>
+                        <li>Set the custom <code>FNavDataGenerator</code> type as the default generator in the custom <code>ANavigationData</code></li>
+                    </ul>
+
+                    <p>
+                        Before jumping straight into the mapping logic, I'd like to make sure we can trigger nav grid builds
+                        from the editor correctly. To achieve this with minimal configuration, I created a simple skeleton for
+                        the navigation data class.
+                    </p>
+
+                    <div class="code-block-container elevated-project-content">
+                        <div class="code-block">
+                            <div class="code-block-line">UCLASS()</div>
+                            <div class="code-block-line">class GRIDNAVIGATOR_API AGNRecastNavMesh : public ARecastNavMesh</div>
+                            <div class="code-block-line">{</div>
+                            <div class="code-block-line">	GENERATED_BODY()</div>
+                            <div class="code-block-line">public:</div>
+                            <div class="code-block-line">	AGNRecastNavMesh(const FObjectInitializer& ObjectInitializer);</div>
+                            <div class="code-block-line"></div>
+                            <div class="code-block-line">	virtual void ConditionalConstructGenerator() override;</div>
+                            <div class="code-block-line">};</div>
+                        </div>
+                    </div>
+
+                    <div class="generic-spacer-medium"></div>
                     <h1>Creating GNNavDataGenerator</h1>
                     <p>
                         From the previous section, each <code>ANavigationData</code> instance can have multiple associated
@@ -212,7 +244,7 @@
 
 
                     <div class="generic-spacer-small"></div>
-                    <h2>Creating a Build Task</h2>
+                    <h2>Kicking off a Build Task</h2>
                     <p>
                         Looking at <code>FRecastNavMeshGenerator</code> for an example, it looks like it maintains a list
                         of elements that are associated with <code>FAsyncTask</code>s. This is a general Unreal class that
