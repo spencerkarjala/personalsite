@@ -289,34 +289,11 @@
                         </div>
                     </div>
 
-                    <div class="generic-spacer-medium"></div>
-                    <h1>Creating GNNavDataGenerator</h1>
                     <p>
-                        From the previous section, each <code>ANavigationData</code> instance can have multiple associated
-                        nav bounds (ie. <code>ANavMeshBoundsVolume</code>), and has one associated <code>FNavDataGenerator</code>.
-                        This means that, for the next step, we want to implement a full navigation build that generates
-                        navigation data for each nav bound associated with the <code>ANavigationData</code>.
-                    </p>
-                    <p>
-                        <code>NavDataGenerator.h</code> provides an interface mostly centered around creating, maintaining,
-                        and finishing asynchronous build tasks. For now, we'll just implement a single build task that
-                        implements the full nav data build and kick that off every time. If it's too slow, it can be split
-                        up and pipelined later.
-                    </p>
-
-                    <div class="generic-shrink-container-90p project-image-container">
-                        <img class="project-image-content elevated-project-content generic-maxwidth-700px" src="./nav-data-generator-h-interface.png"></img>
-                        <p class="project-image-subtitle">Interface defined by FNavDataGenerator.h (abridged)</p>
-                    </div>
-
-
-                    <div class="generic-spacer-small"></div>
-                    <h2>Kicking off a Build Task</h2>
-                    <p>
-                        Looking at <code>FRecastNavMeshGenerator</code> for an example, it looks like it maintains a list
-                        of elements that are associated with <code>FAsyncTask</code>s. This is a general Unreal class that
-                        can run a synchronous workload asynchronously by providing the synchronous work as a template
-                        parameter. The template class needs to implement the following methods:
+                        The above code borrows from <code>FRecastNavMeshGenerator</code> in that it uses Unreal's built-in
+                        <code>FAsyncTask</code>s to implement asynchronous builds. This is a general Unreal class that
+                        can run a synchronous workload asynchronously by wrapping the work in a class that is passed in as a
+                        template parameter. The template class needs to implement the following methods:
                     </p>
                     <ul>
                         <li><code>TStatId SyncTask::GetStatId()</code></li>
@@ -326,9 +303,49 @@
                     </ul>
 
                     <p>
-                        With that implemented, we can set the generator in the RecastNavMesh class and try to move a
-                        nav bound in the editor. Using the below code, a log pops up in the window and we know that
-                        the task is being kicked off successfully!
+                        With that, a dummy build task can be added to <code>FRecastNavMeshGenerator</code>:
+                    </p>
+
+                    <div class="code-block-container elevated-project-content">
+                        <div class="code-block">
+                            <div class="code-block-line"><code-comment>// .h</code-comment></div>
+                            <div class="code-block-line">class FGNDataBuildTask final : public FNonAbandonableTask</div>
+                            <div class="code-block-line">{</div>
+                            <div class="code-block-line">public:</div>
+                            <div class="code-block-line">    TStatId GetStatId() const</div>
+                            <div class="code-block-line">    {</div>
+                            <div class="code-block-line">        RETURN_QUICK_DECLARE_CYCLE_STAT(GNDataBuildTask, STATGROUP_ThreadPoolAsyncTasks);</div>
+                            <div class="code-block-line">    }</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line">    FORCEINLINE bool CanAbandon() const</div>
+                            <div class="code-block-line">    {</div>
+                            <div class="code-block-line">        return false;</div>
+                            <div class="code-block-line">    }</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line">    void DoWork();</div>
+                            <div class="code-block-line">};</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line"><code-comment>// .cpp</code-comment></div>
+                            <div class="code-block-line">void FGNDataBuildTask::DoWork()</div>
+                            <div class="code-block-line">{</div>
+                            <div class="code-block-line">    UE_LOG(LogGNNavDataGenerator, Warning, TEXT("Starting work on FGNDataBuildTask; game time: %0.2f"), FPlatformTime::Seconds());</div>
+                            <div class="code-block-line">    FPlatformProcess::Sleep(2.f);</div>
+                            <div class="code-block-line">    UE_LOG(LogGNNavDataGenerator, Warning, TEXT("Work completed on FGNDataBuildTask; game time: %0.2f"), FPlatformTime::Seconds());</div>
+                            <div class="code-block-line">}</div>
+                        </div>
+                    </div>
+
+                    <p>
+                        The <code>DoWork</code> method finally provides the entrypoint for building the map data. To
+                        get it working, we just need to tell our project to use the correct <code>RecastNavMesh</code>.
+                        From <a class="generic-nocolor" href="https://unrealingens.wordpress.com/2018/05/02/overriding-default-ue4-pathfinding-behavior-through-recastnavmesh/" target="_blank">Nicholas' blog post</a>,
+                        we just need to update the "Nav Data Class" under "Engine/Navigation System" for the default
+                        navigation agent to point to our new nav data type.
+                    </p>
+                    <div class="generic-shrink-container-90p project-image-container">
+                        <img class="project-image-content elevated-project-content generic-maxwidth-700px" src="./project-settings-update-recastnavmesh.png"></img>
+                        <p class="project-image-subtitle">Updated project settings for new navigation data type</p>
+                    </div>
                     </p>
 
                     <div class="generic-spacer-medium"></div>
