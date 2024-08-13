@@ -210,15 +210,82 @@
 
                     <div class="code-block-container elevated-project-content">
                         <div class="code-block">
+                            <div class="code-block-line"><code-comment>// .h</code-comment></div>
                             <div class="code-block-line">UCLASS()</div>
                             <div class="code-block-line">class GRIDNAVIGATOR_API AGNRecastNavMesh : public ARecastNavMesh</div>
                             <div class="code-block-line">{</div>
                             <div class="code-block-line">	GENERATED_BODY()</div>
                             <div class="code-block-line">public:</div>
-                            <div class="code-block-line">	AGNRecastNavMesh(const FObjectInitializer& ObjectInitializer);</div>
-                            <div class="code-block-line"></div>
                             <div class="code-block-line">	virtual void ConditionalConstructGenerator() override;</div>
                             <div class="code-block-line">};</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line"><code-comment>// .cpp</code-comment></div>
+                            <div class="code-block-line">void AGNRecastNavMesh::ConditionalConstructGenerator()</div>
+                            <div class="code-block-line">{</div>
+                            <div class="code-block-line">    if (NavDataGenerator.IsValid()) {</div>
+                            <div class="code-block-line">        NavDataGenerator->CancelBuild();</div>
+                            <div class="code-block-line">        NavDataGenerator.Reset();</div>
+                            <div class="code-block-line">    }</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line">    UWorld* World = GetWorld();</div>
+                            <div class="code-block-line">    check(World);</div>
+                            <div class="code-block-line">    const bool bRequiresGenerator = SupportsRuntimeGeneration() || !World->IsGameWorld();</div>
+                            <div class="code-block-line">    if (!bRequiresGenerator) {</div>
+                            <div class="code-block-line">        return;</div>
+                            <div class="code-block-line">    }</div>
+                            <div class="code-block-line">    </div>
+                            <div class="code-block-line">    FGNNavDataGenerator* Generator = new FGNNavDataGenerator();</div>
+                            <div class="code-block-line">    if (Generator == nullptr) {</div>
+                            <div class="code-block-line">        UE_LOG(LogGNRecastNavMesh, Error, TEXT("Failed to instantiate new GNNavDataGenerator"));</div>
+                            <div class="code-block-line">        return;</div>
+                            <div class="code-block-line">    }</div>
+                            <div class="code-block-line">    NavDataGenerator = MakeShareable(static_cast<FNavDataGenerator*>(Generator));</div>
+                            <div class="code-block-line">}</div>
+                        </div>
+                    </div>
+
+                    <p>
+                        This code is a tweaked implementation from the <code>ConditionalConstructGenerator</code> in the
+                        original <code>ARecastNavMesh</code> class. The function is called automatically by Unreal to
+                        construct the generator class, so it's been tweaked to instantiate our own generator instead.
+                    </p>
+
+                    <p>
+                        Similarly, a skeleton class for the generator needs to be created. For now, I've just implemented
+                        it so that it runs a full rebuild any time the engine detects a bounds change.
+                    </p>
+
+                    <div class="code-block-container elevated-project-content">
+                        <div class="code-block">
+                            <div class="code-block-line"><code-comment>// .h</code-comment></div>
+                            <div class="code-block-line">class GRIDNAVIGATOR_API FGNNavDataGenerator final : public FNavDataGenerator</div>
+                            <div class="code-block-line">{</div>
+                            <div class="code-block-line">public:</div>
+                            <div class="code-block-line">    virtual void OnNavigationBoundsChanged() override;</div>
+                            <div class="code-block-line">    virtual bool RebuildAll() override;</div>
+                            <div class="code-block-line">private:</div>
+                            <div class="code-block-line">    typedef FAsyncTask<FGNDataBuildTask> FGNAsyncBuildTask;</div>
+                            <div class="code-block-line">    TUniquePtr&lt;FGNAsyncBuildTask&gt; CurrentBuildTask = nullptr;</div>
+                            <div class="code-block-line">}</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line"><code-comment>// .cpp</code-comment></div>
+                            <div class="code-block-line">void FGNNavDataGenerator::OnNavigationBoundsChanged()</div>
+                            <div class="code-block-line">{</div>
+                            <div class="code-block-line">    RebuildAll();</div>
+                            <div class="code-block-line">}</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line">bool FGNNavDataGenerator::RebuildAll()</div>
+                            <div class="code-block-line">{</div>
+                            <div class="code-block-line">    if (CurrentBuildTask.IsValid()) {</div>
+                            <div class="code-block-line">        CurrentBuildTask->EnsureCompletion();</div>
+                            <div class="code-block-line">    }</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line">    CurrentBuildTask = MakeUnique&lt;FGNAsyncBuildTask&gt;(FGNDataBuildTask());</div>
+                            <div class="code-block-line">    check(CurrentBuildTask.IsValid());</div>
+                            <div class="code-block-line">    CurrentBuildTask->StartBackgroundTask();</div>
+                            <div class="code-block-line">    </div>
+                            <div class="code-block-line">    return true;</div>
+                            <div class="code-block-line">}</div>
                         </div>
                     </div>
 
