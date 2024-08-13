@@ -563,6 +563,7 @@ code {
     flex-direction: row;
     width: 95%;
     margin: auto;
+    margin: 2rem auto 2rem auto;
 }
 
 .code-block-padding {
