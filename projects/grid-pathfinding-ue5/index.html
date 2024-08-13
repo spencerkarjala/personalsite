@@ -361,6 +361,21 @@
                     </p>
 
                     <div class="generic-spacer-medium"></div>
+                    <h1>Creating Navigation Data</h1>
+
+                    <p>
+                        For the design of the navigation data structure, I'm more focused on making it fast and easy
+                        to build on top of rather than efficient with space. For this reason, the data will be
+                        implemented by an adjacency list, which will contain a map from node coordinates to map
+                        nodes. This provides constant-time lookup for nodes and, since edges are defined as pairs
+                        of nodes, it also provides constant-time lookup for edges.
+                    </p>
+                    <div class="generic-shrink-container-90p project-image-container">
+                        <img class="project-image-content elevated-project-content generic-maxwidth-900px" src="./navigation-data-format-explanation.png"></img>
+                        <p class="project-image-subtitle">Updated project settings for new navigation data type</p>
+                    </div>
+
+                    <div class="generic-spacer-medium"></div>
                     <h1>Creating the Cursor</h1>
                     <p>
                         For this plugin, I'd like there to be an easy way to hook in a customizable cursor
