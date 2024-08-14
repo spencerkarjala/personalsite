@@ -364,15 +364,20 @@
                     <h1>Creating Navigation Data</h1>
 
                     <p>
-                        For the design of the navigation data structure, I'm more focused on making it fast and easy
-                        to build on top of rather than efficient with space. For this reason, the data will be
-                        implemented by an adjacency list, which will contain a map from node coordinates to map
-                        nodes. This provides constant-time lookup for nodes and, since edges are defined as pairs
-                        of nodes, it also provides constant-time lookup for edges.
+                        For the navigation data, there are two main ways that it will be used:
+                    </p>
+                    <ul>
+                        <li>Random accesses; eg. getting pathfinding information at a specific world coordinate</li>
+                        <li>Neighboring accesses; eg. pathfinding from one node to its neighbor</li>
+                    </ul>
+                    <p>
+                        Using the adjacency list data model (shown below) means that these two access types can
+                        be done in constant time if nodes are stored in a hash map associated with their positions.
+                        This isn't very space efficient, but it does provide the most flexibility.
                     </p>
                     <div class="generic-shrink-container-90p project-image-container">
-                        <img class="project-image-content elevated-project-content generic-maxwidth-900px" src="./navigation-data-format-explanation.png"></img>
-                        <p class="project-image-subtitle">Updated project settings for new navigation data type</p>
+                        <img class="project-image-content elevated-project-content generic-maxwidth-600px" src="./navigation-data-format-explanation.png"></img>
+                        <p class="project-image-subtitle">Data format for nodes and edges in grid map</p>
                     </div>
 
                     <div class="generic-spacer-medium"></div>
