@@ -379,6 +379,26 @@
                         <img class="project-image-content elevated-project-content generic-maxwidth-600px" src="./navigation-data-format-explanation.png"></img>
                         <p class="project-image-subtitle">Data format for nodes and edges in grid map</p>
                     </div>
+                    <p>
+                        Essentially, each <b>node</b> keeps track of: its <i>position</i> and a list of its
+                        <i>outgoing edges</i>. Each <b>edge</b> then keeps track of its <i>source node</i>,
+                        its <i>destination node</i>, and its <i>type</i>. An <b>edge type</b> can be any of
+                        the following, depending on the mesh surface at both nodes:
+                    </p>
+                    <ul><li>Keeping track of edge types in this way is nice, since it makes implementing features like visual debugging a lot easier.</li></ul>
+                    <div class="generic-shrink-container-90p project-image-container">
+                        <img class="project-image-content elevated-project-content generic-maxwidth-600px" src="./navdata-edge-types.png"></img>
+                    </div>
+                    <p>
+                        Zooming out one level, we have navigation <b>blocks</b>, which are collections of
+                        nodes and edges (ie. an adjacency list). This is the data that represents a
+                        <code>NavMeshBoundsVolume</code> in the editor. Another way to phrase this is that
+                        each <code>NavMeshBoundsVolume</code> gets its own adjacency list.
+                    </p>
+                    <div class="generic-shrink-container-62p project-image-container">
+                        <img class="project-image-content elevated-project-content generic-maxwidth-700px" src="./navdata-blocks-idea.png"></img>
+                        <p class="project-image-subtitle">Conceptual idea for navigation blocks</p>
+                    </div>
 
                     <div class="generic-spacer-medium"></div>
                     <h1>Creating the Cursor</h1>
