@@ -399,6 +399,20 @@
                         <img class="project-image-content elevated-project-content generic-maxwidth-700px" src="./navdata-blocks-idea.png"></img>
                         <p class="project-image-subtitle">Conceptual idea for navigation blocks</p>
                     </div>
+                    <p>
+                        Because each <code>ANavigationData</code> can have multiple bounds, we need a container
+                        of nav blocks to tie everything together - we'll call this a <b>level</b>. Each level
+                        then contains a collection of <i>blocks</i> and any <i>connections</i> between them.
+                        There are two ways a connection between blocks can be formed:
+                    </p>
+                    <ol>
+                        <li>In map nodes where blocks overlap, formed <i>automatically</i></li>
+                        <li>In predetermined pairs of map nodes, specified <i>manually</i> (eg. teleport locations)</li>
+                    </ol>
+                    <div class="generic-shrink-container-62p project-image-container">
+                        <img class="project-image-content elevated-project-content generic-maxwidth-700px" src="./navdata-level-idea.png"></img>
+                        <p class="project-image-subtitle">Conceptual idea for navigation levels</p>
+                    </div>
 
                     <div class="generic-spacer-medium"></div>
                     <h1>Creating the Cursor</h1>
