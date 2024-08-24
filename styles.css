@@ -113,6 +113,7 @@ code {
     align-items: center;
     justify-content: center;
     font-family: 'c4type';
+    margin-bottom: 1rem;
 }
 
 .header-name {
