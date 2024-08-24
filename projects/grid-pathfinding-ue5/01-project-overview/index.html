@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Grid Pathfinding in Unreal Engine | skarja.la</title>
+        <link rel="stylesheet" href="/styles.css" />
+    </head>
+    <body id="root-container" class="root-container">
+        <div class="document-content-container">
+            <div class="project-page-container">
+                <div class="header-container">
+                    <div class="header-title">
+                        <a href="/" class="invisilink">
+                            <div class="header-name">
+                                skarjala
+                            </div>
+                        </a>
+                        <div class="header-spacer">•</div>
+                        <div class="header-contact">
+                            spencerkarjala@gmail.com
+                        </div>
+                    </div>
+                    <hr style="width:100%; height:0;" />
+                    <div class="nav-container">
+                        <a class="nav-item" href="/about/">About</a>
+                        <a class="nav-item" href="/projects/">Projects</a>
+                    </div>
+                </div>
+
+                <div class="project-page-content">
+                    <ol>
+                        <li><a href="/projects/grid-pathfinding-ue5/01-project-overview/" class="generic-nocolor">Project Overview</a></li>
+                        <li><a href="/projects/grid-pathfinding-ue5/02-exploring-unreal-navigation/" class="generic-nocolor">Exploring Unreal Navigation</a></li>
+                        <li><a href="/projects/grid-pathfinding-ue5/03-creating-unreal-interface/" class="generic-nocolor">Creating the Unreal Interface</a></li>
+                        <li>Creating Navigation Data (WIP)</a></li>
+                        <!-- <li><a href="/projects/grid-pathfinding-ue5/04-creating-navigation-data/" class="generic-nocolor">Creating Navigation Data</a></li> -->
+                        <li>Implementing Pathfinding (WIP)</li>
+                        <li>Creating the Cursor (WIP)</li>
+                    </ol>
+
+                    <div class="generic-spacer-medium"></div>
+
+                    <h1>Project Overview</h1>
+                    <p>
+                        The primary goal of this plugin is to implement pathfinding that:
+                    </p>
+                    <ol>
+                        <li>Is aligned to a grid, similar to games like <a class="generic-nocolor" target="_blank" href="https://store.steampowered.com/app/250520/UnderRail/">UnderRail</a>;</li>
+                        <li>Has bounds and performs static object avoidance;</li>
+                        <li>Is modular, and can be integrated into a project with just a few settings tweaks.</li>
+                    </ol>
+                    <p>
+                        Before talking about system design, it's important to understand how exactly the system will be used.
+                        Off the top of my head, these are the main use cases:
+                    </p>
+                    <ul>
+                        <li>From the editor, I want to specify which parts of my static map geometry are navigable</li>
+                        <li>From the editor, I want to create links that can teleport the player between different parts of one navigable zone or between multiple navigable zones</li>
+                        <li>From the editor, I want to save and load navigation data</li>
+                        <li>From blueprint, I want to query for a path between two world positions staying within specified navigable zones</li>
+                        <li>From blueprint, I want to dispatch a command for a movement-enabled actor to travel to a new location</li>
+                        <li>From blueprint, I want a component to preview navigable paths for player visualization</li>
+                    </ul>
+                    <p>
+                        Most of this is similar to how Unreal's navigation system already works — therefore, most of the
+                        work will be around swapping the backend navigation system implementation with something that
+                        supports grid-aligned movement.
+                    </p>
+                    <p>
+                        Here's a quick mockup of what this looks like from the editor's side:
+                    </p>
+                    <ul>
+                        <li><b>Navigation bounds</b> (<code>NavMeshBoundsVolume</code>) are placed in the world, which specifies to the navigation system which geometry needs navigation data</li>
+                        <li><b>Links</b> between navigation bounds are specified that enable player movement between zones</li>
+                        <li>If navigation bounds <b>overlap</b>, then pathfinding between them works automatically</li>
+                    </ul>
+                    <div class="generic-shrink-container-62p project-image-container">
+                        <img class="project-image-content elevated-project-content" src="./navboxes.png"></img>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
