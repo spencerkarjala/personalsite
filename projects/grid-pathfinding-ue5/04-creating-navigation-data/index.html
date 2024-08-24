@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Grid Pathfinding in Unreal Engine | skarja.la</title>
+        <link rel="stylesheet" href="/styles.css" />
+    </head>
+    <body id="root-container" class="root-container">
+        <div class="document-content-container">
+            <div class="project-page-container">
+                <div class="header-container">
+                    <div class="header-title">
+                        <a href="/" class="invisilink">
+                            <div class="header-name">
+                                skarjala
+                            </div>
+                        </a>
+                        <div class="header-spacer">•</div>
+                        <div class="header-contact">
+                            spencerkarjala@gmail.com
+                        </div>
+                    </div>
+                    <hr style="width:100%; height:0;" />
+                    <div class="nav-container">
+                        <a class="nav-item" href="/about/">About</a>
+                        <a class="nav-item" href="/projects/">Projects</a>
+                    </div>
+                </div>
+
+                <div class="project-page-content">
+                    <ol>
+                        <li><a href="/projects/grid-pathfinding-ue5/01-project-overview/" class="generic-nocolor">Project Overview</a></li>
+                        <li><a href="/projects/grid-pathfinding-ue5/02-exploring-unreal-navigation/" class="generic-nocolor">Exploring Unreal Navigation</a></li>
+                        <li><a href="/projects/grid-pathfinding-ue5/03-creating-unreal-interface/" class="generic-nocolor">Creating the Unreal Interface</a></li>
+                        <li>Creating Navigation Data (WIP)</a></li>
+                        <!-- <li><a href="/projects/grid-pathfinding-ue5/04-creating-navigation-data/" class="generic-nocolor">Creating Navigation Data</a></li> -->
+                        <li>Implementing Pathfinding (WIP)</li>
+                        <li>Creating the Cursor (WIP)</li>
+                    </ol>
+
+                    <div class="generic-spacer-medium"></div>
+                    <h1>Creating Navigation Data</h1>
+
+                    <p>
+                        For the navigation data, there are two main ways that it will be used:
+                    </p>
+                    <ul>
+                        <li>Random accesses; eg. getting pathfinding information at a specific world coordinate</li>
+                        <li>Neighboring accesses; eg. pathfinding from one node to its neighbor</li>
+                    </ul>
+                    <p>
+                        Using the adjacency list data model (shown below) means that these two access types can
+                        be done in constant time if nodes are stored in a hash map associated with their positions.
+                        This isn't very space efficient, but it does provide the most flexibility.
+                    </p>
+                    <div class="generic-shrink-container-90p project-image-container">
+                        <img class="project-image-content elevated-project-content generic-maxwidth-600px" src="./navigation-data-format-explanation.png"></img>
+                        <p class="project-image-subtitle">Data format for nodes and edges in grid map</p>
+                    </div>
+                    <p>
+                        Essentially, each <b>node</b> keeps track of: its <i>position</i> and a list of its
+                        <i>outgoing edges</i>. Each <b>edge</b> then keeps track of its <i>source node</i>,
+                        its <i>destination node</i>, and its <i>type</i>. An <b>edge type</b> can be any of
+                        the following, depending on the mesh surface at both nodes:
+                    </p>
+                    <ul><li>Keeping track of edge types in this way is nice, since it makes implementing features like visual debugging a lot easier.</li></ul>
+                    <div class="generic-shrink-container-90p project-image-container">
+                        <img class="project-image-content elevated-project-content generic-maxwidth-600px" src="./navdata-edge-types.png"></img>
+                    </div>
+                    <p>
+                        Zooming out one level, we have navigation <b>blocks</b>, which are collections of
+                        nodes and edges (ie. an adjacency list). This is the data that represents a
+                        <code>NavMeshBoundsVolume</code> in the editor. Another way to phrase this is that
+                        each <code>NavMeshBoundsVolume</code> gets its own adjacency list.
+                    </p>
+                    <div class="generic-shrink-container-62p project-image-container">
+                        <img class="project-image-content elevated-project-content generic-maxwidth-700px" src="./navdata-blocks-idea.png"></img>
+                        <p class="project-image-subtitle">Conceptual idea for navigation blocks</p>
+                    </div>
+                    <p>
+                        Because each <code>ANavigationData</code> can have multiple bounds, we need a container
+                        of nav blocks to tie everything together - we'll call this a <b>level</b>. Each level
+                        then contains a collection of <i>blocks</i> and any <i>connections</i> between them.
+                        There are two ways a connection between blocks can be formed:
+                    </p>
+                    <ol>
+                        <li>In map nodes where blocks overlap, formed <i>automatically</i></li>
+                        <li>In predetermined pairs of map nodes, specified <i>manually</i> (eg. teleport locations)</li>
+                    </ol>
+                    <div class="generic-shrink-container-62p project-image-container">
+                        <img class="project-image-content elevated-project-content generic-maxwidth-700px" src="./navdata-level-idea.png"></img>
+                        <p class="project-image-subtitle">Conceptual idea for navigation levels</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
