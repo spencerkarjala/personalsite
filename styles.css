@@ -468,6 +468,31 @@ code {
     margin: 0.5rem 0;
 }
 
+.projects-chapter-select {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem 0
+}
+
+.projects-chapter-select-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.projects-chapter-select-primary {
+    color: inherit;
+}
+
+.projects-chapter-select-secondary {
+    color: #807580;
+}
+
+.projects-chapter-select-center {
+    min-width: 300px;
+    text-align: center;
+}
+
 .project-content-container {
     display: flex;
     flex-direction: row;
