@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Grid Pathfinding in Unreal Engine | skarja.la</title>
+        <link rel="stylesheet" href="/styles.css" />
+    </head>
+    <body id="root-container" class="root-container">
+        <div class="document-content-container">
+            <div class="project-page-container">
+                <div class="header-container">
+                    <div class="header-title">
+                        <a href="/" class="invisilink">
+                            <div class="header-name">
+                                skarjala
+                            </div>
+                        </a>
+                        <div class="header-spacer">•</div>
+                        <div class="header-contact">
+                            spencerkarjala@gmail.com
+                        </div>
+                    </div>
+                    <hr style="width:100%; height:0;" />
+                    <div class="nav-container">
+                        <a class="nav-item" href="/about/">About</a>
+                        <a class="nav-item" href="/projects/">Projects</a>
+                    </div>
+                </div>
+
+                <div class="project-page-content">
+                    <ol>
+                        <li><a href="/projects/grid-pathfinding-ue5/01-project-overview/" class="generic-nocolor">Project Overview</a></li>
+                        <li><a href="/projects/grid-pathfinding-ue5/02-exploring-unreal-navigation/" class="generic-nocolor">Exploring Unreal Navigation</a></li>
+                        <li><a href="/projects/grid-pathfinding-ue5/03-creating-unreal-interface/" class="generic-nocolor">Creating the Unreal Interface</a></li>
+                        <li>Creating Navigation Data (WIP)</a></li>
+                        <!-- <li><a href="/projects/grid-pathfinding-ue5/04-creating-navigation-data/" class="generic-nocolor">Creating Navigation Data</a></li> -->
+                        <li>Implementing Pathfinding (WIP)</li>
+                        <li>Creating the Cursor (WIP)</li>
+                    </ol>
+
+                    <div class="generic-spacer-medium"></div>
+                    
+                    <h1>Creating the Unreal Interface</h1>
+
+                    <p>
+                        In the previous section, we learned that the following can be done to implement custom pathfinding:
+                    </p>
+                    <ul>
+                        <li>Implement an <code>ANavigationData</code>-derived class (specifically, <code>ARecastNavMesh</code>)</li>
+                        <li>Implement an <code>FNavDataGenerator</code>-derived class to create the navigation data</li>
+                        <li>Set the custom <code>FNavDataGenerator</code> type as the default generator in the custom <code>ANavigationData</code></li>
+                    </ul>
+
+                    <p>
+                        Before jumping straight into the mapping logic, I'd like to make sure we can trigger nav grid builds
+                        from the editor correctly. To achieve this with minimal configuration, I created a simple skeleton for
+                        the navigation data class.
+                    </p>
+
+                    <div class="code-block-container elevated-project-content">
+                        <div class="code-block">
+                            <div class="code-block-line"><code-comment>// .h</code-comment></div>
+                            <div class="code-block-line">UCLASS()</div>
+                            <div class="code-block-line">class GRIDNAVIGATOR_API AGNRecastNavMesh : public ARecastNavMesh</div>
+                            <div class="code-block-line">{</div>
+                            <div class="code-block-line">	GENERATED_BODY()</div>
+                            <div class="code-block-line">public:</div>
+                            <div class="code-block-line">	virtual void ConditionalConstructGenerator() override;</div>
+                            <div class="code-block-line">};</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line"><code-comment>// .cpp</code-comment></div>
+                            <div class="code-block-line">void AGNRecastNavMesh::ConditionalConstructGenerator()</div>
+                            <div class="code-block-line">{</div>
+                            <div class="code-block-line">    if (NavDataGenerator.IsValid()) {</div>
+                            <div class="code-block-line">        NavDataGenerator->CancelBuild();</div>
+                            <div class="code-block-line">        NavDataGenerator.Reset();</div>
+                            <div class="code-block-line">    }</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line">    UWorld* World = GetWorld();</div>
+                            <div class="code-block-line">    check(World);</div>
+                            <div class="code-block-line">    const bool bRequiresGenerator = SupportsRuntimeGeneration() || !World->IsGameWorld();</div>
+                            <div class="code-block-line">    if (!bRequiresGenerator) {</div>
+                            <div class="code-block-line">        return;</div>
+                            <div class="code-block-line">    }</div>
+                            <div class="code-block-line">    </div>
+                            <div class="code-block-line">    FGNNavDataGenerator* Generator = new FGNNavDataGenerator();</div>
+                            <div class="code-block-line">    if (Generator == nullptr) {</div>
+                            <div class="code-block-line">        UE_LOG(LogGNRecastNavMesh, Error, TEXT("Failed to instantiate new GNNavDataGenerator"));</div>
+                            <div class="code-block-line">        return;</div>
+                            <div class="code-block-line">    }</div>
+                            <div class="code-block-line">    NavDataGenerator = MakeShareable(static_cast<FNavDataGenerator*>(Generator));</div>
+                            <div class="code-block-line">}</div>
+                        </div>
+                    </div>
+
+                    <p>
+                        This code is a tweaked implementation from the <code>ConditionalConstructGenerator</code> in the
+                        original <code>ARecastNavMesh</code> class. The function is called automatically by Unreal to
+                        construct the generator class, so it's been tweaked to instantiate our own generator instead.
+                    </p>
+
+                    <p>
+                        Similarly, a skeleton class for the generator needs to be created. For now, I've just implemented
+                        it so that it runs a full rebuild any time the engine detects a bounds change.
+                    </p>
+
+                    <div class="code-block-container elevated-project-content">
+                        <div class="code-block">
+                            <div class="code-block-line"><code-comment>// .h</code-comment></div>
+                            <div class="code-block-line">class GRIDNAVIGATOR_API FGNNavDataGenerator final : public FNavDataGenerator</div>
+                            <div class="code-block-line">{</div>
+                            <div class="code-block-line">public:</div>
+                            <div class="code-block-line">    virtual void OnNavigationBoundsChanged() override;</div>
+                            <div class="code-block-line">    virtual bool RebuildAll() override;</div>
+                            <div class="code-block-line">private:</div>
+                            <div class="code-block-line">    typedef FAsyncTask<FGNDataBuildTask> FGNAsyncBuildTask;</div>
+                            <div class="code-block-line">    TUniquePtr&lt;FGNAsyncBuildTask&gt; CurrentBuildTask = nullptr;</div>
+                            <div class="code-block-line">}</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line"><code-comment>// .cpp</code-comment></div>
+                            <div class="code-block-line">void FGNNavDataGenerator::OnNavigationBoundsChanged()</div>
+                            <div class="code-block-line">{</div>
+                            <div class="code-block-line">    RebuildAll();</div>
+                            <div class="code-block-line">}</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line">bool FGNNavDataGenerator::RebuildAll()</div>
+                            <div class="code-block-line">{</div>
+                            <div class="code-block-line">    if (CurrentBuildTask.IsValid()) {</div>
+                            <div class="code-block-line">        CurrentBuildTask->EnsureCompletion();</div>
+                            <div class="code-block-line">    }</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line">    CurrentBuildTask = MakeUnique&lt;FGNAsyncBuildTask&gt;(FGNDataBuildTask());</div>
+                            <div class="code-block-line">    check(CurrentBuildTask.IsValid());</div>
+                            <div class="code-block-line">    CurrentBuildTask->StartBackgroundTask();</div>
+                            <div class="code-block-line">    </div>
+                            <div class="code-block-line">    return true;</div>
+                            <div class="code-block-line">}</div>
+                        </div>
+                    </div>
+
+                    <p>
+                        The above code borrows from <code>FRecastNavMeshGenerator</code> in that it uses Unreal's built-in
+                        <code>FAsyncTask</code>s to implement asynchronous builds. This is a general Unreal class that
+                        can run a synchronous workload asynchronously by wrapping the work in a class that is passed in as a
+                        template parameter. The template class needs to implement the following methods:
+                    </p>
+                    <ul>
+                        <li><code>TStatId SyncTask::GetStatId()</code></li>
+                        <li><code>void SyncTask::DoWork()</code></li>
+                        <li><code>bool SyncTask::CanAbandon()</code></li>
+                        <li><code>void SyncTask::Abandon()</code> (only if <code>CanAbandon</code> returns true)</li>
+                    </ul>
+
+                    <p>
+                        With that, a dummy build task can be added to <code>FRecastNavMeshGenerator</code>:
+                    </p>
+
+                    <div class="code-block-container elevated-project-content">
+                        <div class="code-block">
+                            <div class="code-block-line"><code-comment>// .h</code-comment></div>
+                            <div class="code-block-line">class FGNDataBuildTask final : public FNonAbandonableTask</div>
+                            <div class="code-block-line">{</div>
+                            <div class="code-block-line">public:</div>
+                            <div class="code-block-line">    TStatId GetStatId() const</div>
+                            <div class="code-block-line">    {</div>
+                            <div class="code-block-line">        RETURN_QUICK_DECLARE_CYCLE_STAT(GNDataBuildTask, STATGROUP_ThreadPoolAsyncTasks);</div>
+                            <div class="code-block-line">    }</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line">    FORCEINLINE bool CanAbandon() const</div>
+                            <div class="code-block-line">    {</div>
+                            <div class="code-block-line">        return false;</div>
+                            <div class="code-block-line">    }</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line">    void DoWork();</div>
+                            <div class="code-block-line">};</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line"><code-comment>// .cpp</code-comment></div>
+                            <div class="code-block-line">void FGNDataBuildTask::DoWork()</div>
+                            <div class="code-block-line">{</div>
+                            <div class="code-block-line">    UE_LOG(LogGNNavDataGenerator, Warning, TEXT("Starting work on FGNDataBuildTask; game time: %0.2f"), FPlatformTime::Seconds());</div>
+                            <div class="code-block-line">    FPlatformProcess::Sleep(2.f);</div>
+                            <div class="code-block-line">    UE_LOG(LogGNNavDataGenerator, Warning, TEXT("Work completed on FGNDataBuildTask; game time: %0.2f"), FPlatformTime::Seconds());</div>
+                            <div class="code-block-line">}</div>
+                        </div>
+                    </div>
+
+                    <p>
+                        The <code>DoWork</code> method finally provides the entrypoint for building the map data. To
+                        get it working, we just need to tell our project to use the correct <code>RecastNavMesh</code>.
+                        From <a class="generic-nocolor" href="https://unrealingens.wordpress.com/2018/05/02/overriding-default-ue4-pathfinding-behavior-through-recastnavmesh/" target="_blank">Nicholas' blog post</a>,
+                        we just need to update the "Nav Data Class" under "Engine/Navigation System" for the default
+                        navigation agent to point to our new nav data type.
+                    </p>
+                    <div class="generic-shrink-container-90p project-image-container">
+                        <img class="project-image-content elevated-project-content generic-maxwidth-700px" src="./project-settings-update-recastnavmesh.png"></img>
+                        <p class="project-image-subtitle">Updated project settings for new navigation data type</p>
+                    </div>
+
+                    <p>
+                        Now, after removing any existing <code>ARecastNavMesh</code>es that might point to the old
+                        navmesh type, adjusting an <code>ANavMeshBoundsVolume</code> shows the following in the editor:
+                    </p>
+                    <div class="generic-flex-container-vertical project-image-container">
+                        <video class="generic-shrink-container-90p" autoplay loop muted>
+                            <source src="./working-nav-build-trigger.webm" type="video/webm" />
+                        </video>
+                        <p class="project-image-subtitle">An updated NavMeshBoundsVolume triggering logs</p>
+                    </div>
+
+                    <p>
+                        With that, integration into the editor and engine is now working, and we can finally
+                        move on to creating the actual mapping data.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
