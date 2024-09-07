@@ -124,8 +124,27 @@
 
                     <h2>Navigation Data Implementation</h2>
                     <p>
-                        
+                        The data model for the organization of pathfinding resources is shown below. Each level
+                        stores a mapping from IDs to blocks and an adjacency list that stores the map graph data.
+                        The blocks themselves are simple, and just associate an ID (the ID of the corresponding
+                        <code>NavMeshBoundsVolume</code>) with the bounds used for pathfinding.
                     </p>
+
+                    <div class="code-block-container elevated-project-content">
+                        <div class="code-block">
+                            <div class="code-block-line">struct FNavGridLevel</div>
+                            <div class="code-block-line">{</div>
+                            <div class="code-block-line">    TMap<uint32, FNavGridBlock> Blocks;</div>
+                            <div class="code-block-line">    FNavGridAdjacencyList Map;</div>
+                            <div class="code-block-line">};</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line">struct FNavGridBlock</div>
+                            <div class="code-block-line">{</div>
+                            <div class="code-block-line">    FBox Bounds;</div>
+                            <div class="code-block-line">    uint32 ID = 0;</div>
+                            <div class="code-block-line">};</div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="project-page-padding"></div>
