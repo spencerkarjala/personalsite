@@ -124,6 +124,18 @@
 
                     <h2>Navigation Data Implementation</h2>
                     <p>
+                        The navigation grid data model is summarized in the image below. Specifically, the
+                        <code>ANavigationGridData</code> created by the navigation system has an <code>FNavGridLevel</code>
+                        that contains the navigation grid data. The level data is made up of two parts: an
+                        <code>FNavGridAdjacencyList</code> structure that stores the map graph nodes and edges,
+                        and a hash table that associates IDs to blocks.
+                    </p>
+
+                    <p>
+                        <b>put img here when krita starts working again</b>
+                    </p>
+
+                    <p>
                         The data model for the organization of pathfinding resources is shown below. Each level
                         stores a mapping from IDs to blocks and an adjacency list that stores the map graph data.
                         The blocks themselves are simple, and just associate an ID (the ID of the corresponding
