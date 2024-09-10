@@ -157,6 +157,104 @@
                             <div class="code-block-line">};</div>
                         </div>
                     </div>
+
+                    <p>
+                        The most important data structure of this implementation is the <code>FNavGridAdjacencyList</code>,
+                        which is what stores the nodes and edges of the navigation grid graph.
+                    </p>
+
+                    <div class="code-block-container elevated-project-content">
+                        <div class="code-block">
+                            <div class="code-block-line"><code-comment>// NavGridAdjacencyList.h</code-comment></div>
+                            <div class="code-block-line">class FNavGridAdjacencyList</div>
+                            <div class="code-block-line">{</div>
+                            <div class="code-block-line">public:</div>
+                            <div class="code-block-line">    std::optional&lt;std::reference_wrapper&lt;const NavGrid::FNode>> GetNode(const NavGrid::FAdjacencyListIndex& Index) const;</div>
+                            <div class="code-block-line">    bool HasNode(const NavGrid::FAdjacencyListIndex& Index) const;</div>
+                            <div class="code-block-line">    void AddNode(const NavGrid::FAdjacencyListIndex& Index);</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line">    TArray<NavGrid::FAdjacencyListIndex> GetReachableNeighbors(const NavGrid::FAdjacencyListIndex& Index) const;</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line">    void CreateEdge(const NavGrid::FAdjacencyListIndex& FromIndex, const NavGrid::FAdjacencyListIndex& ToIndex, const NavGrid::EMapEdgeType EdgeType);</div>
+                            <div class="code-block-line">    </div>
+                            <div class="code-block-line">private:</div>
+                            <div class="code-block-line">    TMap&lt;NavGrid::FAdjacencyListIndex, NavGrid::FNode> Nodes;</div>
+                            <div class="code-block-line">};</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line"><code-comment>// NavGridAdjacencyListTypes.h</code-comment></div>
+                            <div class="code-block-line">namespace NavGrid</div>
+                            <div class="code-block-line">{</div>
+                            <div class="code-block-line">    enum EMapEdgeType : uint8</div>
+                            <div class="code-block-line">    {</div>
+                            <div class="code-block-line">        None, Direct, Cliff,</div>
+                            <div class="code-block-line">        Slope, SlopeBottom, SlopeTop,</div>
+                            <div class="code-block-line">    };</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line">    typedef FInt64Vector3 FAdjacencyListIndex;</div>
+                            <div class="code-block-line">        </div>
+                            <div class="code-block-line">    struct FNode</div>
+                            <div class="code-block-line">    {</div>
+                            <div class="code-block-line">        FAdjacencyListIndex Index;</div>
+                            <div class="code-block-line">        TArray&lt;FEdge> OutEdges;</div>
+                            <div class="code-block-line">    };</div>
+                            <div class="code-block-line">        </div>
+                            <div class="code-block-line">    struct FEdge</div>
+                            <div class="code-block-line">    {</div>
+                            <div class="code-block-line">        FAdjacencyListIndex InIndex;</div>
+                            <div class="code-block-line">        FAdjacencyListIndex OutIndex;</div>
+                            <div class="code-block-line">        EMapEdgeType Type;</div>
+                            <div class="code-block-line">        FVector Direction;</div>
+                            <div class="code-block-line">    };</div>
+                            <div class="code-block-line">}</div>
+                        </div>
+                    </div>
+
+                    <p>
+                        The <code>FNavGridAdjacencyList</code> has a few simple getter/setter methods along with
+                        the <code>GetReachableNeighbors</code> function, which returns a list of a node's neighbors.
+                        This is useful when doing A* pathfinding, which we'll look at in the next section. The
+                        method implementations are pretty straightforward:
+                    </p>
+
+                    <div class="code-block-container elevated-project-content">
+                        <div class="code-block">
+                            <div class="code-block-line">std::optional&lt;std::reference_wrapper&lt;const NavGrid::FNode>> FNavGridAdjacencyList::GetNode(const FAdjacencyListIndex& Index) const</div>
+                            <div class="code-block-line">{</div>
+                            <div class="code-block-line">    if (!Nodes.Contains(Index)) {</div>
+                            <div class="code-block-line">        return std::nullopt;</div>
+                            <div class="code-block-line">    }</div>
+                            <div class="code-block-line">    return Nodes[Index];</div>
+                            <div class="code-block-line">}</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line">bool FNavGridAdjacencyList::HasNode(const FAdjacencyListIndex& Index) const</div>
+                            <div class="code-block-line">{</div>
+                            <div class="code-block-line">    return Nodes.Contains(Index);</div>
+                            <div class="code-block-line">}</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line">void FNavGridAdjacencyList::AddNode(const FAdjacencyListIndex& Index)</div>
+                            <div class="code-block-line">{</div>
+                            <div class="code-block-line">    Nodes.Emplace(Index, NavGrid::FNode(Index));</div>
+                            <div class="code-block-line">}</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line">TArray&lt;FAdjacencyListIndex> FNavGridAdjacencyList::GetReachableNeighbors(const FAdjacencyListIndex& Index) const</div>
+                            <div class="code-block-line">{</div>
+                            <div class="code-block-line">    const auto NodeResult = GetNode(Index);</div>
+                            <div class="code-block-line">    if (!NodeResult.has_value()) {</div>
+                            <div class="code-block-line">        return {};</div>
+                            <div class="code-block-line">    }</div>
+                            <div class="code-block-line">    const auto Node = NodeResult->get();</div>
+                            <div class="code-block-line"> </div>
+                            <div class="code-block-line">    TArray<FAdjacencyListIndex> Result;</div>
+                            <div class="code-block-line">    for (const auto& Edge : Node.OutEdges) {</div>
+                            <div class="code-block-line">        if (Edge.Type != NavGrid::Direct && Edge.Type != NavGrid::Slope && Edge.Type != NavGrid::SlopeBottom && Edge.Type != NavGrid::SlopeTop) {</div>
+                            <div class="code-block-line">            continue;</div>
+                            <div class="code-block-line">        }</div>
+                            <div class="code-block-line">        Result.Emplace(Edge.OutIndex);</div>
+                            <div class="code-block-line">    }</div>
+                            <div class="code-block-line">    return Result;</div>
+                            <div class="code-block-line">}</div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="project-page-padding"></div>
